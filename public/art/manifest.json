@@ -1,0 +1,114 @@
+{
+  "generatedBy": "scripts/build-art.mjs",
+  "deterministic": true,
+  "files": [
+    {
+      "file": "/art/t1-hero.svg",
+      "bytes": 45730
+    },
+    {
+      "file": "/art/t1-band.svg",
+      "bytes": 20942
+    },
+    {
+      "file": "/art/t1-column-0.svg",
+      "bytes": 26080
+    },
+    {
+      "file": "/art/t1-column-1.svg",
+      "bytes": 23777
+    },
+    {
+      "file": "/art/t1-column-2.svg",
+      "bytes": 18340
+    },
+    {
+      "file": "/art/t1-tile-0.svg",
+      "bytes": 18730
+    },
+    {
+      "file": "/art/t1-tile-1.svg",
+      "bytes": 15483
+    },
+    {
+      "file": "/art/t1-tile-2.svg",
+      "bytes": 15560
+    },
+    {
+      "file": "/art/t1-tile-3.svg",
+      "bytes": 13899
+    },
+    {
+      "file": "/art/t2-hero.svg",
+      "bytes": 56690
+    },
+    {
+      "file": "/art/t2-band.svg",
+      "bytes": 26972
+    },
+    {
+      "file": "/art/t2-column-0.svg",
+      "bytes": 36599
+    },
+    {
+      "file": "/art/t2-column-1.svg",
+      "bytes": 32286
+    },
+    {
+      "file": "/art/t2-column-2.svg",
+      "bytes": 22344
+    },
+    {
+      "file": "/art/t2-tile-0.svg",
+      "bytes": 25175
+    },
+    {
+      "file": "/art/t2-tile-1.svg",
+      "bytes": 19560
+    },
+    {
+      "file": "/art/t2-tile-2.svg",
+      "bytes": 19458
+    },
+    {
+      "file": "/art/t2-tile-3.svg",
+      "bytes": 16486
+    },
+    {
+      "file": "/art/t3-hero.svg",
+      "bytes": 65155
+    },
+    {
+      "file": "/art/t3-band.svg",
+      "bytes": 31658
+    },
+    {
+      "file": "/art/t3-column-0.svg",
+      "bytes": 39375
+    },
+    {
+      "file": "/art/t3-column-1.svg",
+      "bytes": 35861
+    },
+    {
+      "file": "/art/t3-column-2.svg",
+      "bytes": 28078
+    },
+    {
+      "file": "/art/t3-tile-0.svg",
+      "bytes": 28161
+    },
+    {
+      "file": "/art/t3-tile-1.svg",
+      "bytes": 23931
+    },
+    {
+      "file": "/art/t3-tile-2.svg",
+      "bytes": 23879
+    },
+    {
+      "file": "/art/t3-tile-3.svg",
+      "bytes": 21392
+    }
+  ]
+}

@@ -1,26 +1,241 @@
 @import "tailwindcss";
+@import "../styles/templates.css";
 
+/* ---------------------------------------------------------------------------
+   Andari Salon, shared foundation.
+
+   Three complete design systems live side by side in one deployment, so the
+   rules here are strict about scoping:
+
+   1. Every custom rule sits in an @layer, so Tailwind utilities always win.
+   2. Anything template specific is nested under [data-template="t1|t2|t3"].
+      Nothing outside that attribute may set a template colour, radius or
+      motion value. That is what keeps one template's styling out of another's.
+   3. There is exactly one z-index scale, declared once, below. Raw z-index
+      values are banned in the codebase; `npm run audit:z` enforces it.
+--------------------------------------------------------------------------- */
+
+@theme {
+  /* Brand palette. Both inks are measured from the supplied logo file, at
+     pixels where its alpha channel is fully opaque. Everything else is a tint
+     or shade of those two hues, so no colour here is invented. */
+  --color-olive: #575540; /* ANDARI wordmark */
+  --color-olive-deep: #3f3d2e;
+  --color-olive-dark: #2b2a20;
+  --color-olive-mid: #6f6c52;
+  --color-olive-soft: #999678; /* lightened so t3 faint text clears AA on night-3 */
+  --color-olive-pale: #b6b39c;
+  --color-olive-wash: #d9d6c6;
+
+  --color-ink: #322f28; /* SALON lockup */
+  --color-ink-soft: #4a4740;
+
+  --color-paper: #fbfaf7;
+  --color-paper-2: #f3f1ea;
+  --color-sand: #e9e5d9;
+  --color-sand-deep: #ddd8c8;
+  --color-bone: #edeae5;
+
+  --color-night: #14140f;
+  --color-night-2: #1c1c16;
+  --color-night-3: #26251d;
+
+  --font-sans: "Neue Montreal", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Motion. Exponential ease-out only: no bounce, no elastic. */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   The single z-index scale.
+
+   Order required by the brief:
+     content < sticky header < template switcher < mobile menu
+       < calendar and popovers < cookie banner < skip link
+
+   Note on the calendar and the mobile menu: the brief also asks that the
+   calendar never cover the mobile menu. Those two asks point opposite ways, so
+   the scale below follows the stated order and the components guarantee the
+   outcome instead: opening the mobile menu closes any popover, and the
+   calendar trigger is inert while the menu is open. The two are never on
+   screen together, so the relative token order cannot be observed.
+--------------------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --z-below: -1;
+  --z-base: 0;
+  --z-raised: 1;
+  --z-content: 10;
+  --z-sticky-header: 100;
+  --z-template-switcher: 200;
+  --z-mobile-menu: 300;
+  --z-popover: 400;
+  --z-cookie: 500;
+  /* The page-transition curtain. Not in the brief's list, so it is slotted
+     between the cookie banner and the skip link: it must cover everything
+     while a page swaps, but never the skip link. */
+  --z-curtain: 550;
+  --z-skip-link: 600;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  @font-face {
+    font-family: "Neue Montreal";
+    src: url("/fonts/NeueMontreal-Light.woff2") format("woff2");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Neue Montreal";
+    src: url("/fonts/NeueMontreal-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Neue Montreal";
+    src: url("/fonts/NeueMontreal-Medium.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Neue Montreal";
+    src: url("/fonts/NeueMontreal-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: auto; /* Lenis owns smooth scrolling where it is enabled */
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Nothing in this project may scroll sideways. */
+    overflow-x: clip;
+  }
+
+  /* Locked while a popover, the mobile menu or a loader owns the screen. */
+  body[data-scroll-locked="true"] {
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  ::selection {
+    background: var(--color-olive);
+    color: var(--color-paper);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: var(--z-skip-link);
+    padding: 0.75rem 1.25rem;
+    background: var(--color-olive);
+    color: var(--color-paper);
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    transform: translateY(-200%);
+    transition: transform 220ms var(--ease-out-quart);
+  }
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    outline-color: var(--color-paper);
+  }
+
+  /* Honeypot. `clip` rather than a huge negative offset, which would need a
+     positioned ancestor and otherwise widens the page. */
+  .honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Per-letter text animation: the parent carries the accessible name, the
+     letters are hidden from assistive tech. */
+  .split-text {
+    display: inline-block;
+  }
+  .split-text > span {
+    display: inline-block;
+    will-change: transform, opacity;
+  }
+}
+
+@layer utilities {
+  /* svh, not vh: the hero must not resize when mobile browser chrome hides. */
+  .h-screen-svh {
+    height: 100svh;
+  }
+  .min-h-screen-svh {
+    min-height: 100svh;
+  }
+  /* One screen once the sticky header is accounted for. */
+  .h-hero {
+    height: calc(100svh - var(--t-header-h, 64px));
+    min-height: 34rem;
+  }
+
+  .text-balance-tight {
+    text-wrap: balance;
+  }
+
+  /* Canvas grain must never escape its box. An unclipped scaled canvas covers
+     the entire page. */
+  .grain-clip {
+    contain: paint;
+    overflow: hidden;
+    isolation: isolate;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

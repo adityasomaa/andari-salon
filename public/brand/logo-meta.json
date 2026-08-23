@@ -1,0 +1,20 @@
+{
+  "source": "assets/source/andari-salon.png",
+  "wordmark": {
+    "width": 592.0,
+    "height": 167.25
+  },
+  "monogram": {
+    "side": 156.96
+  },
+  "palette": {
+    "olive": "#575540",
+    "ink": "#322F28",
+    "bone": "#EDEAE5"
+  },
+  "rings": {
+    "wordmark": 7,
+    "lockup": 7,
+    "monogram": 1
+  }
+}

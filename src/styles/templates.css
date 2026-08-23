@@ -1,0 +1,383 @@
+/* ---------------------------------------------------------------------------
+   The three design directions.
+
+   Shared components read `--t-*` custom properties and never hard-code a
+   colour, radius, duration or type step. Swapping the `data-template`
+   attribute on the page root is what turns one set of components into three
+   genuinely different sites.
+
+   Everything here is inside @layer components so Tailwind utilities still
+   override it, and every rule is scoped to a `data-template` value so one
+   template's styling can never leak into another's.
+
+   They deliberately diverge on all five axes the brief asks for:
+
+     axis          t1 editorial       t2 warm             t3 dark luxe
+     layout        asymmetric 12col   centred, dense      split, hairline framed
+     type scale    huge, 300 weight   moderate, 500       small, wide tracked
+     density       very airy          compact             medium, tall gutters
+     corners       0px, ruled         24px, pill buttons  2px, thin strokes
+     motion        slow blur rise     spring, springy     opacity and hairline only
+--------------------------------------------------------------------------- */
+
+@layer components {
+  /* ===================== TEMPLATE 1, EDITORIAL TENANG ==================== */
+  [data-template="t1"] {
+    /* Height of the sticky bar. The hero subtracts it so hero plus header is
+       exactly one screen, rather than one screen plus a bar. */
+    --t-header-h: 64px;
+    --t-bg: var(--color-paper);
+    --t-bg-alt: var(--color-paper-2);
+    --t-surface: var(--color-paper);
+    --t-surface-2: var(--color-paper-2);
+    --t-fg: var(--color-olive-dark);
+    --t-fg-muted: var(--color-olive);
+    --t-fg-faint: var(--color-olive-mid);
+    --t-accent: var(--color-olive);
+    --t-accent-fg: var(--color-paper);
+    --t-accent-soft: var(--color-sand);
+    --t-line: color-mix(in oklab, var(--color-olive) 22%, transparent);
+    --t-line-strong: color-mix(in oklab, var(--color-olive) 45%, transparent);
+
+    /* Sharp. Nothing in this template has a rounded corner. */
+    --t-radius: 0px;
+    --t-radius-sm: 0px;
+    --t-radius-pill: 0px;
+    --t-border: 1px;
+
+    /* Enormous display, hairline weight, tight leading. Sized so the longest
+       headline in copy.ts still lands on two lines at desktop. */
+    --t-display: clamp(2.5rem, 7.2vw, 7rem);
+    --t-display-weight: 300;
+    --t-display-track: -0.045em;
+    --t-display-leading: 0.86;
+    --t-h1: clamp(2.4rem, 6.2vw, 5.2rem);
+    --t-h2: clamp(1.8rem, 3.8vw, 3rem);
+    --t-h3: clamp(1.15rem, 1.8vw, 1.5rem);
+    --t-body: clamp(1rem, 1.15vw, 1.1rem);
+    --t-small: 0.875rem;
+    --t-label: 0.6875rem;
+    --t-label-track: 0.28em;
+    --t-label-weight: 400;
+    --t-body-leading: 1.75;
+
+    /* Very airy. */
+    --t-section-y: clamp(7rem, 15vw, 14rem);
+    --t-gutter: clamp(1.5rem, 5vw, 6rem);
+    --t-stack: clamp(1.75rem, 3vw, 2.75rem);
+    --t-max: 88rem;
+
+    /* Slow, unhurried, blur based. */
+    --t-dur-fast: 320ms;
+    --t-dur: 720ms;
+    --t-dur-slow: 1200ms;
+    --t-ease: var(--ease-out-quart);
+    --t-stagger: 70ms;
+
+    background: var(--t-bg);
+    color: var(--t-fg);
+  }
+
+  /* ===================== TEMPLATE 2, HANGAT DAN RAMAH ==================== */
+  [data-template="t2"] {
+    /* Height of the sticky bar. The hero subtracts it so hero plus header is
+       exactly one screen, rather than one screen plus a bar. */
+    --t-header-h: 64px;
+    --t-bg: var(--color-paper-2);
+    --t-bg-alt: var(--color-sand);
+    --t-surface: var(--color-paper);
+    --t-surface-2: var(--color-sand);
+    --t-fg: var(--color-olive-dark);
+    --t-fg-muted: var(--color-ink-soft);
+    --t-fg-faint: var(--color-olive);
+    --t-accent: var(--color-olive);
+    --t-accent-fg: var(--color-paper);
+    --t-accent-soft: var(--color-sand-deep);
+    --t-line: color-mix(in oklab, var(--color-olive) 18%, transparent);
+    --t-line-strong: color-mix(in oklab, var(--color-olive) 38%, transparent);
+
+    /* Soft. Cards 24px, controls fully pill. */
+    --t-radius: 24px;
+    --t-radius-sm: 14px;
+    --t-radius-pill: 999px;
+    --t-border: 1px;
+
+    /* Moderate scale, medium weight, roomier leading. */
+    --t-display: clamp(2.1rem, 4.6vw, 3.9rem);
+    --t-display-weight: 500;
+    --t-display-track: -0.025em;
+    --t-display-leading: 1.02;
+    --t-h1: clamp(2rem, 4.4vw, 3.4rem);
+    --t-h2: clamp(1.6rem, 3vw, 2.5rem);
+    --t-h3: clamp(1.1rem, 1.5vw, 1.3rem);
+    --t-body: clamp(1rem, 1.1vw, 1.0625rem);
+    --t-small: 0.9375rem;
+    --t-label: 0.75rem;
+    --t-label-track: 0.06em;
+    --t-label-weight: 500;
+    --t-body-leading: 1.65;
+
+    /* Compact. Things sit close together. */
+    --t-section-y: clamp(4rem, 8vw, 7rem);
+    --t-gutter: clamp(1.25rem, 4vw, 3.5rem);
+    --t-stack: clamp(1rem, 1.6vw, 1.5rem);
+    --t-max: 78rem;
+
+    /* Livelier. Springs and short holds. */
+    --t-dur-fast: 180ms;
+    --t-dur: 420ms;
+    --t-dur-slow: 640ms;
+    --t-ease: var(--ease-out-quint);
+    --t-stagger: 45ms;
+
+    background: var(--t-bg);
+    color: var(--t-fg);
+  }
+
+  /* ===================== TEMPLATE 3, GELAP DAN MEWAH ===================== */
+  [data-template="t3"] {
+    /* Height of the sticky bar. The hero subtracts it so hero plus header is
+       exactly one screen, rather than one screen plus a bar. */
+    --t-header-h: 64px;
+    --t-bg: var(--color-night);
+    --t-bg-alt: var(--color-night-2);
+    --t-surface: var(--color-night-2);
+    --t-surface-2: var(--color-night-3);
+    --t-fg: var(--color-bone);
+    --t-fg-muted: var(--color-olive-pale);
+    --t-fg-faint: var(--color-olive-soft);
+    --t-accent: var(--color-olive-pale);
+    --t-accent-fg: var(--color-night);
+    --t-accent-soft: var(--color-night-3);
+    --t-line: color-mix(in oklab, var(--color-olive-pale) 22%, transparent);
+    --t-line-strong: color-mix(in oklab, var(--color-olive-pale) 50%, transparent);
+
+    /* Almost sharp. A 2px tell, not a radius. */
+    --t-radius: 2px;
+    --t-radius-sm: 2px;
+    --t-radius-pill: 2px;
+    --t-border: 1px;
+
+    /* Restrained size, wide tracking, generous leading for light on dark. */
+    --t-display: clamp(1.75rem, 3.4vw, 2.9rem);
+    --t-display-weight: 300;
+    --t-display-track: 0.02em;
+    --t-display-leading: 1.18;
+    --t-h1: clamp(1.75rem, 3.4vw, 2.75rem);
+    --t-h2: clamp(1.4rem, 2.4vw, 2rem);
+    --t-h3: clamp(1rem, 1.3vw, 1.15rem);
+    --t-body: clamp(0.9375rem, 1vw, 1rem);
+    --t-small: 0.875rem;
+    --t-label: 0.625rem;
+    --t-label-track: 0.42em;
+    --t-label-weight: 400;
+    --t-body-leading: 1.85; /* light type on dark needs the extra air */
+
+    --t-section-y: clamp(5.5rem, 11vw, 10rem);
+    --t-gutter: clamp(1.25rem, 4.5vw, 4.5rem);
+    --t-stack: clamp(1.25rem, 2vw, 2rem);
+    --t-max: 82rem;
+
+    /* The least motion of the three. Opacity and hairlines only. */
+    --t-dur-fast: 420ms;
+    --t-dur: 900ms;
+    --t-dur-slow: 1500ms;
+    --t-ease: var(--ease-out-expo);
+    --t-stagger: 90ms;
+
+    background: var(--t-bg);
+    color: var(--t-fg);
+  }
+
+  /* --------------------------- shared primitives ------------------------ */
+
+  @media (min-width: 1024px) {
+    [data-template] {
+      --t-header-h: 72px;
+    }
+  }
+
+  [data-template] .t-label {
+    font-size: var(--t-label);
+    letter-spacing: var(--t-label-track);
+    font-weight: var(--t-label-weight);
+    text-transform: uppercase;
+    color: var(--t-fg-muted);
+  }
+
+  [data-template] .t-body {
+    font-size: var(--t-body);
+    line-height: var(--t-body-leading);
+    color: var(--t-fg-muted);
+    max-width: 62ch;
+  }
+
+  [data-template] .t-display {
+    font-size: var(--t-display);
+    font-weight: var(--t-display-weight);
+    letter-spacing: var(--t-display-track);
+    line-height: var(--t-display-leading);
+    color: var(--t-fg);
+  }
+
+  [data-template] .t-h2 {
+    font-size: var(--t-h2);
+    font-weight: var(--t-display-weight);
+    letter-spacing: var(--t-display-track);
+    line-height: 1.08;
+    color: var(--t-fg);
+  }
+
+  [data-template="t2"] .t-h2,
+  [data-template="t3"] .t-h2 {
+    line-height: 1.2;
+  }
+
+  [data-template] .t-shell {
+    width: 100%;
+    max-width: var(--t-max);
+    margin-inline: auto;
+    padding-inline: var(--t-gutter);
+  }
+
+  [data-template] .t-section {
+    padding-block: var(--t-section-y);
+  }
+
+  [data-template] .t-rule {
+    border: 0;
+    border-top: 1px solid var(--t-line);
+    margin: 0;
+  }
+
+  /* ------------------------------- buttons ------------------------------ */
+
+  [data-template] .t-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6em;
+    min-height: 48px;
+    padding: 0.85rem 1.6rem;
+    font-size: var(--t-small);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    cursor: pointer;
+    border: var(--t-border) solid transparent;
+    border-radius: var(--t-radius-pill);
+    transition:
+      background-color var(--t-dur-fast) var(--t-ease),
+      color var(--t-dur-fast) var(--t-ease),
+      border-color var(--t-dur-fast) var(--t-ease),
+      transform var(--t-dur-fast) var(--t-ease);
+  }
+  [data-template] .t-btn:active {
+    transform: translateY(1px);
+  }
+  [data-template] .t-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  [data-template] .t-btn-primary {
+    background: var(--t-accent);
+    color: var(--t-accent-fg);
+    border-color: var(--t-accent);
+  }
+  [data-template] .t-btn-primary:hover {
+    background: color-mix(in oklab, var(--t-accent) 84%, var(--t-fg));
+    border-color: color-mix(in oklab, var(--t-accent) 84%, var(--t-fg));
+  }
+  [data-template="t3"] .t-btn-primary:hover {
+    background: var(--color-bone);
+    border-color: var(--color-bone);
+  }
+
+  [data-template] .t-btn-ghost {
+    background: transparent;
+    color: var(--t-fg);
+    border-color: var(--t-line-strong);
+  }
+  [data-template] .t-btn-ghost:hover {
+    border-color: var(--t-fg);
+    background: color-mix(in oklab, var(--t-accent) 8%, transparent);
+  }
+
+  /* Template 1 keeps its CTA as a ruled link rather than a filled box. */
+  [data-template="t1"] .t-btn-quiet {
+    background: transparent;
+    color: var(--t-fg);
+    border: 0;
+    border-bottom: 1px solid var(--t-line-strong);
+    border-radius: 0;
+    padding: 0.35rem 0;
+    min-height: 44px;
+  }
+  [data-template="t1"] .t-btn-quiet:hover {
+    border-bottom-color: var(--t-fg);
+  }
+
+  /* ------------------------------- surfaces ----------------------------- */
+
+  [data-template] .t-card {
+    background: var(--t-surface);
+    border: var(--t-border) solid var(--t-line);
+    border-radius: var(--t-radius);
+  }
+  /* Template 1 does not use card chrome at all: groups are ruled, not boxed. */
+  [data-template="t1"] .t-card {
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--t-line);
+    border-radius: 0;
+  }
+
+  /* ------------------------------ form fields --------------------------- */
+
+  [data-template] .t-field {
+    width: 100%;
+    min-height: 52px;
+    padding: 0.9rem 1.1rem;
+    font: inherit;
+    font-size: var(--t-body);
+    color: var(--t-fg);
+    background: var(--t-surface);
+    border: var(--t-border) solid var(--t-line-strong);
+    border-radius: var(--t-radius-sm);
+    transition:
+      border-color var(--t-dur-fast) var(--t-ease),
+      background-color var(--t-dur-fast) var(--t-ease);
+  }
+  [data-template="t1"] .t-field {
+    padding-inline: 0;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--t-line-strong);
+    border-radius: 0;
+  }
+  [data-template] .t-field::placeholder {
+    color: var(--t-fg-faint);
+    opacity: 1;
+  }
+  [data-template] .t-field:hover {
+    border-color: var(--t-fg-faint);
+  }
+  [data-template] .t-field[aria-invalid="true"],
+  [data-template] .t-field[data-invalid="true"] {
+    border-color: #a4372a;
+  }
+  [data-template="t3"] .t-field[aria-invalid="true"],
+  [data-template="t3"] .t-field[data-invalid="true"] {
+    border-color: #e39a8b;
+  }
+
+  [data-template] .t-error {
+    color: #8f2f23;
+    font-size: var(--t-small);
+    line-height: 1.5;
+  }
+  [data-template="t3"] .t-error {
+    color: #e8a99b;
+  }
+}
