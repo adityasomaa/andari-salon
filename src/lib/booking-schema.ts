@@ -89,8 +89,12 @@ export const bookingSchema = z
     /**
      * Honeypot. Positioned with `clip`, never `left:-9999px`, so it cannot
      * create a horizontal scrollbar. Bots fill it, humans never see it.
+     *
+     * Deliberately not constrained here. Failing validation would answer 422
+     * and tell the bot exactly which check it tripped; the route handler
+     * instead answers 200 with nothing useful attached.
      */
-    website: z.string().max(0, "").optional().default(""),
+    website: z.string().max(200).optional().default(""),
   })
   .strict();
 
