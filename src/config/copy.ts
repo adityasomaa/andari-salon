@@ -151,7 +151,7 @@ export const COPY = {
     },
     phone: {
       label: "Nomor WhatsApp",
-      hint: "Boleh diawali 08 atau 62.",
+      hint: "Boleh ditulis 08xx, +62, dengan spasi atau tanda hubung.",
       placeholder: "08xxxxxxxxxx",
     },
     service: {

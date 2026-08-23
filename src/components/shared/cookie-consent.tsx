@@ -168,9 +168,16 @@ function CookiePanel({ open, onClose }: { open: boolean; onClose: () => void }) 
 
   const C = COPY.cookies;
 
+  // Hard unmount rather than an exit animation. Inside AnimatePresence the
+  // panel stays mounted for the length of its exit, and because it sits on a
+  // higher z token than the mobile menu it would paint over the menu for that
+  // whole window. Worse, an exit animation is driven by requestAnimationFrame,
+  // so in a backgrounded tab it never finishes at all.
+  if (menuOpen) return null;
+
   return (
     <AnimatePresence>
-      {open && !menuOpen ? (
+      {open ? (
         <motion.div
           role="dialog"
           aria-modal="false"

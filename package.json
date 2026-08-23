@@ -9,7 +9,8 @@
     "lint": "eslint",
     "assets": "python scripts/trace-logo.py && python scripts/verify-logo.py && python scripts/build-fonts.py && python scripts/build-icons.py && node scripts/build-art.mjs",
     "audit": "node scripts/audit-tokens.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify": "node scripts/verify-production.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

@@ -12,8 +12,29 @@ import { addDaysISO, isValidISODate, todayISO } from "./dates";
 
 const TEMPLATE_IDS = TEMPLATES.map((t) => t.id) as [string, ...string[]];
 
-/** Accepts 08xxxxxxxx, 62xxxxxxxx, +62xxxxxxxx, with spaces, dots or dashes. */
-const PHONE_RE = /^(?:\+?62|0)[\s.-]?8[1-9][\s.-]?\d{2,3}[\s.-]?\d{3,4}[\s.-]?\d{2,5}$/;
+/**
+ * Indonesian mobile numbers, normalised before they are judged.
+ *
+ * A pattern that expects separators in fixed positions rejects most of the
+ * ways people actually write their number: 0812-3456-7890, 0812 3456 7890,
+ * +62 812 3456 7890. Strip everything that is not a digit first, then check
+ * the digits, then hand back one canonical 08 form for the WhatsApp message.
+ *
+ * Returns null when the number cannot be read as an Indonesian mobile.
+ */
+export function normalizePhone(raw: string): string | null {
+  const digits = raw.replace(/[^\d]/g, "");
+  if (!digits) return null;
+
+  let local: string;
+  if (digits.startsWith("62")) local = `0${digits.slice(2)}`;
+  else if (digits.startsWith("0")) local = digits;
+  else if (digits.startsWith("8")) local = `0${digits}`;
+  else return null;
+
+  // 08 + operator prefix + subscriber number: 10 to 14 digits in total.
+  return /^08[1-9]\d{7,11}$/.test(local) ? local : null;
+}
 
 export const bookingSchema = z
   .object({
@@ -24,12 +45,23 @@ export const bookingSchema = z
       .max(80, "Nama terlalu panjang.")
       .regex(/[^\d\s]/, "Nama harus berisi huruf."),
 
+    // Stored as the normalised 08 form, whatever the visitor typed.
     phone: z
       .string()
       .trim()
       .min(9, "Nomor WhatsApp terlalu pendek.")
-      .max(20, "Nomor WhatsApp terlalu panjang.")
-      .regex(PHONE_RE, "Nomor WhatsApp belum benar. Contoh: 081234567890."),
+      .max(24, "Nomor WhatsApp terlalu panjang.")
+      .transform((v, ctx) => {
+        const local = normalizePhone(v);
+        if (!local) {
+          ctx.addIssue({
+            code: "custom",
+            message: "Nomor WhatsApp belum benar. Contoh: 081234567890 atau +62 812 3456 7890.",
+          });
+          return z.NEVER;
+        }
+        return local;
+      }),
 
     serviceId: z.string().refine((v) => SERVICE_IDS.includes(v), "Pilih salah satu layanan."),
 
