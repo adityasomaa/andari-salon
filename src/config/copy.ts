@@ -41,7 +41,7 @@ export const COPY = {
   pages: {
     home: {
       title: "Andari Salon",
-      metaTitle: "Andari Salon, salon rambut baru di Denpasar Barat",
+      metaTitle: "Andari Salon, salon rambut di Denpasar Barat",
       metaDescription: `Andari Salon baru dibuka di ${ADDRESS.village}, ${ADDRESS.district.replace("Kec. ", "")}. Lihat layanan, lokasi, dan cara booking lewat WhatsApp.`,
     },
     layanan: {
@@ -65,7 +65,10 @@ export const COPY = {
 
   hero: {
     label: "Baru dibuka",
-    headline: "Salon rambut baru di Denpasar Barat.",
+    // The headline says what the place is for. That the salon has just opened
+    // is honest and stays on the page, but it belongs in the small label and
+    // the description, not as the one big thing a visitor reads first.
+    headline: "Ruang untuk merawat rambut Anda.",
     description:
       "Andari Salon baru saja membuka pintunya. Lihat layanannya, lalu pilih tanggal dan jam yang cocok untuk Anda.",
     cta: { label: "Booking lewat WhatsApp", href: "/booking" },
