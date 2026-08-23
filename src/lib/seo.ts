@@ -17,8 +17,11 @@ type PageKey = keyof typeof COPY.pages;
 export function pageMetadata(page: PageKey, path: string, isTemplateRoute = true): Metadata {
   const p = COPY.pages[page];
   const url = `${SITE.url}${path}`;
+  // The home title already contains the brand name, so it opts out of the
+  // root layout's "%s | Andari Salon" template rather than saying it twice.
+  const title = page === "home" ? { absolute: p.metaTitle } : p.metaTitle;
   return {
-    title: p.metaTitle,
+    title,
     description: p.metaDescription,
     alternates: { canonical: url },
     robots:
