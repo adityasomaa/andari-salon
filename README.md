@@ -17,6 +17,29 @@ https://andarisalon.onyxcreative.asia)
 
 ---
 
+## The link hub at /booking
+
+`/booking` is the page for the Instagram bio: one short list of every way to
+reach the salon. It wears template 2's clothes (warm sand, 24px cards, pill
+controls, springy motion) but has no site navigation, no footer and no preview
+switcher, because a link hub wants none of those.
+
+Rows live in `src/config/links.ts`. Add, remove or reorder entries there and
+the page follows; nothing else needs editing. The WhatsApp row goes through the
+same `WhatsAppLink` component as the rest of the site, so a message sent from
+the hub still tells the salon which page and which button it came from.
+
+Links into the site resolve through `sitePath()`, which points at the chosen
+template while the three previews coexist and at the flat paths once
+`PREVIEW_MODE` is off. Unlike the previews, this page is indexed and listed in
+the sitemap: it is a finished page with only one version of itself.
+
+Note the name collision to keep in mind: `/booking` is this link hub, while the
+actual booking form lives at `/template-N/booking`. If the site is ever
+flattened, rename one of the two.
+
+---
+
 ## The three directions
 
 **Template 1, Editorial Tenang.** A paper-white page built on an asymmetric

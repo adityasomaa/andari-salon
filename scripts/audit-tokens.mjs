@@ -224,11 +224,14 @@ const site = read(join(SRC, "config", "site.ts"));
 if (!/status:\s*"unset"/.test(site)) {
   notes.push("OPENING_HOURS.status is no longer 'unset'; confirm real hours were supplied");
 }
-const HOURS_SHAPE = /\b(?:0?\d|1\d|2[0-3])[.:]\d{2}\s*(?:-|–|sampai|s\/d|until)\s*(?:0?\d|1\d|2[0-3])[.:]\d{2}\b/;
+// Minutes are constrained to 00-59 so SVG path data such as "9.91-4.45" does
+// not read as a time range, and path attributes are stripped before scanning.
+const HOURS_SHAPE =
+  /\b(?:[01]?\d|2[0-3])[.:][0-5]\d\s*(?:-|\u2013|sampai|s\/d|until)\s*(?:[01]?\d|2[0-3])[.:][0-5]\d\b/;
 for (const file of files) {
   const rel = relative(ROOT, file).replace(/\\/g, "/");
   if (rel.includes("config/services")) continue; // the slot grid is not opening hours
-  const text = read(file);
+  const text = read(file).replace(/\bd="[^"]*"/g, "");
   const m = HOURS_SHAPE.exec(text);
   if (m) failures.push(`${rel}: looks like an invented opening-hours range "${m[0]}"`);
 }

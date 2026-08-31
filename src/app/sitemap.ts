@@ -13,10 +13,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const legal = ["/privacy", "/terms"];
 
+  // The link hub is a finished page with one version of itself, so it is
+  // listed whether or not the three previews are still running.
   const paths = PREVIEW_MODE
-    ? ["/", ...legal]
+    ? ["/", "/booking", ...legal]
     : [
         "/",
+        "/booking",
         ...TEMPLATE_PATHS.filter((p) => p.startsWith(`/${LIVE_TEMPLATE}`)),
         ...legal,
       ];
@@ -24,7 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return paths.map((path) => ({
     url: `${SITE.url}${path === "/" ? "" : path}`,
     lastModified: now,
-    changeFrequency: path === "/" ? "weekly" : "monthly",
-    priority: path === "/" ? 1 : 0.6,
+    changeFrequency: path === "/" || path === "/booking" ? "weekly" : "monthly",
+    priority: path === "/booking" ? 1 : path === "/" ? 0.9 : 0.6,
   }));
 }

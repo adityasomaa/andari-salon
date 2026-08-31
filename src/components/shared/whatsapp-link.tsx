@@ -30,6 +30,7 @@ type Props = {
   /** Ready-made message. Used by the booking form, which composes server side. */
   message?: string;
   className?: string;
+  style?: React.CSSProperties;
   /** Extra path appended to the fallback origin during server rendering. */
   fallbackPath?: string;
   onClick?: () => void;
