@@ -4,9 +4,10 @@ Three complete design directions for a salon that has just opened in Tegal
 Kertha, Denpasar Barat. One deployment, one content layer, three different
 sites on top of it.
 
-**Live:** https://andari-salon.vercel.app
-(also reachable at https://andarisalon.vercel.app and, once DNS propagates,
-https://andarisalon.onyxcreative.asia)
+**Live:** https://andarisalon.id
+(also reachable at https://andari-salon.vercel.app,
+https://andarisalon.vercel.app and https://andarisalon.onyxcreative.asia,
+all of which canonicalise to andarisalon.id)
 
 - `/` is the chooser. Three cards, one per direction. It is a tool for picking,
   not part of any design, and it disappears when preview mode is switched off.

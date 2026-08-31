@@ -11,7 +11,7 @@ export const SITE = {
   name: "Andari Salon",
   shortName: "Andari",
   /** Production origin. Update here and metadata, sitemap and robots follow. */
-  url: "https://andari-salon.vercel.app",
+  url: "https://andarisalon.id",
   locale: "id-ID",
   /** Bali is UTC+8. Used for "is this date in the past" on client and server. */
   timeZone: "Asia/Makassar",
