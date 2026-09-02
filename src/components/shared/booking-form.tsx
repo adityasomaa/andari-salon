@@ -30,14 +30,12 @@ import { cn } from "@/lib/utils";
 
 import { DatePicker } from "./date-picker";
 import { Listbox, type ListboxGroup } from "./listbox";
-import { useTemplate } from "./template-context";
 
 type Status = "idle" | "submitting" | "sent" | "error";
 
 const F = COPY.form;
 
 export function BookingForm({ className }: { className?: string }) {
-  const template = useTemplate();
   const uid = useId().replace(/:/g, "");
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -86,9 +84,6 @@ export function BookingForm({ className }: { className?: string }) {
       time: time ?? "",
       notes,
       website,
-      pageUrl: window.location.href.split("#")[0],
-      templateId: template?.id,
-      buttonLabel: F.submit,
     };
 
     const parsed = bookingSchema.safeParse(payload);

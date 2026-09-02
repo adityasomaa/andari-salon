@@ -48,8 +48,8 @@ Rows live in `src/config/links.ts`. Add, remove or reorder entries there and
 the page follows. Keep labels to one short line and the list short: six is
 comfortable, eight is the practical ceiling before the fold becomes a fight.
 The WhatsApp row goes through the same `WhatsAppLink` component as the rest of
-the site, so a message sent from the hub still tells the salon which page and
-which button it came from.
+the site. Give a row a `message` when it promises something more specific than
+the default greeting, so the message matches the button that was pressed.
 
 Links into the site resolve through `sitePath()`, which points at the chosen
 template while the three previews coexist and at the flat paths once
@@ -333,6 +333,14 @@ cookie banner's exit animation, during which it painted over the mobile menu.
 pointer, and stops whenever anything holds a scroll lock, which covers the
 calendar, the dropdowns, the mobile menu and the transition curtain. Touch
 devices keep native scrolling.
+
+**WhatsApp messages carry the message and nothing else.** They used to append
+a provenance block naming the page URL, the button pressed and which preview
+was open. That was useful while three designs were being compared, but it reads
+like machine output to whoever receives it, so it is gone: no URL, no button
+label, no template tag. `npm run verify` asserts their absence rather than
+trusting it. If the tracing is ever wanted back, it belongs behind
+`PREVIEW_MODE`, not in every message a real customer sends.
 
 **Booking is validated twice.** The browser validates for fast feedback, then
 `/api/booking` runs the identical schema again and composes the WhatsApp

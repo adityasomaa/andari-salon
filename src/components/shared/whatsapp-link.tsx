@@ -3,69 +3,37 @@
 /**
  * The only way this site links to WhatsApp.
  *
- * Every button that opens WhatsApp goes through here, so every message the
- * salon receives automatically carries the page it came from, the label of the
- * control that was pressed, and which preview was open. No caller has to
- * remember to pass that.
+ * Every button that opens WhatsApp goes through here, so the greeting is
+ * written in one place and the number can never drift from the one in
+ * src/config/site.ts.
  *
- * The href is composed after mount so it reflects the real browser URL
- * (including the preview domain the client is actually looking at). Before
- * hydration it falls back to the configured origin, so the link is never dead.
+ * The message is just the message. It used to carry the page URL, the button
+ * label and which preview was open; that made sense while three designs were
+ * being compared side by side, but it reads like machine output to whoever
+ * receives it, so it is gone.
  */
 
 import type { ReactNode } from "react";
 
-import { SITE } from "@/config/site";
-import { useClientValue } from "@/lib/use-client-value";
 import { buildGeneralMessage, waHref } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 
-import { useTemplate } from "./template-context";
-
 type Props = {
-  /** Shown inside the link, and sent to the salon as "Tombol: ...". */
   children: ReactNode;
-  /** Overrides the label sent in the message when the visible text is an icon. */
-  buttonLabel?: string;
-  /** Ready-made message. Used by the booking form, which composes server side. */
+  /**
+   * Ready-made message. The booking form passes one composed server side;
+   * everything else gets the generic greeting.
+   */
   message?: string;
   className?: string;
   style?: React.CSSProperties;
-  /** Extra path appended to the fallback origin during server rendering. */
-  fallbackPath?: string;
   onClick?: () => void;
   "aria-label"?: string;
   "data-testid"?: string;
 };
 
-export function WhatsAppLink({
-  children,
-  buttonLabel,
-  message,
-  className,
-  fallbackPath = "",
-  onClick,
-  ...rest
-}: Props) {
-  const template = useTemplate();
-  const label =
-    buttonLabel ?? (typeof children === "string" ? children : rest["aria-label"] ?? "WhatsApp");
-
-  const pageUrl = useClientValue(
-    () => window.location.href.split("#")[0],
-    `${SITE.url}${fallbackPath}`,
-  );
-
-  const href =
-    message !== undefined
-      ? waHref(message)
-      : waHref(
-          buildGeneralMessage({
-            pageUrl,
-            buttonLabel: label,
-            templateId: template?.id ?? null,
-          }),
-        );
+export function WhatsAppLink({ children, message, className, onClick, ...rest }: Props) {
+  const href = waHref(message ?? buildGeneralMessage());
 
   return (
     <a
@@ -74,7 +42,6 @@ export function WhatsAppLink({
       rel="noopener noreferrer"
       className={cn(className)}
       onClick={onClick}
-      data-wa-button={label}
       {...rest}
     >
       {children}

@@ -104,9 +104,6 @@ const VALID = {
   time: "11:30",
   notes: "Alergi produk beraroma kuat.",
   website: "",
-  pageUrl: `${ORIGIN}/template-1/booking`,
-  templateId: "template-1",
-  buttonLabel: "Susun pesan WhatsApp",
 };
 
 async function checkBooking() {
@@ -123,9 +120,6 @@ async function checkBooking() {
       "Perawatan Rambut",
       "11:30",
       "Alergi produk beraroma kuat.",
-      `${ORIGIN}/template-1/booking`,
-      "Susun pesan WhatsApp",
-      "01 Editorial Tenang",
     ];
     for (const needle of required) {
       if (!m.includes(needle)) bad(`WhatsApp message is missing "${needle}"`);
@@ -133,19 +127,37 @@ async function checkBooking() {
     if (!good.json.href.startsWith("https://wa.me/6285218958623?text=")) {
       bad(`wa.me link is wrong: ${good.json.href.slice(0, 60)}`);
     }
-    ok("WhatsApp message carries every field, the page URL and the template");
+    ok("WhatsApp message carries every field the visitor filled in");
+
+    // The message is the message: no URL, no button label, no template tag,
+    // nothing that reads as machine output to whoever receives it.
+    const forbidden = [
+      ["http://", "a URL"],
+      ["https://", "a URL"],
+      ["Dikirim dari", "the provenance header"],
+      ["Halaman:", "the page line"],
+      ["Tombol:", "the button line"],
+      ["Template:", "the template line"],
+      [ORIGIN.replace(/^https?:\/\//, ""), "the site host"],
+    ];
+    for (const [needle, what] of forbidden) {
+      if (m.includes(needle)) bad(`WhatsApp message still contains ${what}: "${needle}"`);
+    }
+    const lastLine = m.trim().split("\n").pop();
+    if (!/^(Catatan|Jam):/.test(lastLine)) {
+      bad(`WhatsApp message ends on an unexpected line: "${lastLine}"`);
+    }
+    ok("WhatsApp message carries no URL, button label or template tag");
   }
 
-  // 2. the template tag follows the template the visitor was on
-  for (const [id, label] of [
-    ["template-2", "02 Hangat dan Ramah"],
-    ["template-3", "03 Gelap dan Mewah"],
-  ]) {
-    const r = await post({ ...VALID, templateId: id, pageUrl: `${ORIGIN}/${id}/booking` });
-    if (!r.json.message?.includes(label)) bad(`message for ${id} does not say "${label}"`);
-    if (!r.json.message?.includes(`${ORIGIN}/${id}/booking`)) bad(`message for ${id} has the wrong page URL`);
+  // 2. provenance fields are no longer part of the contract at all
+  {
+    const r = await post({ ...VALID, pageUrl: `${ORIGIN}/x`, templateId: "template-2" });
+    if (r.status !== 422) {
+      bad(`server accepted removed provenance fields (status ${r.status})`);
+    }
+    ok("removed provenance fields are rejected rather than silently ignored");
   }
-  ok("template tag and page URL follow the template the form was on");
 
   // 3. server-side rejections, with the browser bypassed entirely
   const rejects = [

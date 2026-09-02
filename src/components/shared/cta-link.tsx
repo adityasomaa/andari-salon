@@ -39,7 +39,7 @@ export function CtaLink({
 
   if (cta.whatsapp) {
     return (
-      <WhatsAppLink className={classes} buttonLabel={cta.label}>
+      <WhatsAppLink className={classes}>
         {cta.label}
         <Arrow />
       </WhatsAppLink>

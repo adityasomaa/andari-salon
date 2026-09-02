@@ -15,7 +15,6 @@ import { NextResponse } from "next/server";
 
 import { bookingSchema, collectErrors } from "@/lib/booking-schema";
 import { buildBookingMessage, waHref } from "@/lib/whatsapp";
-import type { TemplateId } from "@/config/site";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -44,21 +43,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, href: null, message: "" }, { status: 200 });
   }
 
-  const message = buildBookingMessage(
-    {
-      name: data.name,
-      phone: data.phone,
-      serviceId: data.serviceId,
-      date: data.date,
-      time: data.time,
-      notes: data.notes,
-    },
-    {
-      pageUrl: data.pageUrl || "",
-      buttonLabel: data.buttonLabel,
-      templateId: (data.templateId as TemplateId | undefined) ?? null,
-    },
-  );
+  const message = buildBookingMessage({
+    name: data.name,
+    phone: data.phone,
+    serviceId: data.serviceId,
+    date: data.date,
+    time: data.time,
+    notes: data.notes,
+  });
 
   return NextResponse.json({ ok: true, href: waHref(message), message });
 }

@@ -106,12 +106,7 @@ function Row({ link }: { link: HubLink }) {
 
   if (link.kind === "whatsapp") {
     return (
-      <WhatsAppLink
-        className={ROW_CLASS}
-        style={style}
-        buttonLabel={link.buttonLabel ?? link.label}
-        fallbackPath="/booking"
-      >
+      <WhatsAppLink className={ROW_CLASS} style={style} message={link.message}>
         {inner}
       </WhatsAppLink>
     );

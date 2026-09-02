@@ -148,7 +148,6 @@ export function SiteHeader() {
             {key === "t2" ? (
               <WhatsAppLink
                 className="t-btn t-btn-primary hidden !min-h-11 !px-5 !py-2.5 lg:inline-flex"
-                buttonLabel="WhatsApp di header"
               >
                 WhatsApp
               </WhatsAppLink>
@@ -248,7 +247,6 @@ export function SiteHeader() {
               >
                 <WhatsAppLink
                   className="t-btn t-btn-primary w-full"
-                  buttonLabel="WhatsApp di menu"
                   onClick={() => setMenuOpen(false)}
                 >
                   Hubungi lewat WhatsApp

@@ -60,7 +60,7 @@ export function LocationBlock({
           <p className="t-label">{COPY.footer.contactTitle}</p>
           <ul className="grid gap-1.5 text-[length:var(--t-body)]">
             <li>
-              <WhatsAppLink className="underline underline-offset-4" buttonLabel="Nomor WhatsApp di halaman kontak">
+              <WhatsAppLink className="underline underline-offset-4">
                 WhatsApp {CONTACT.whatsappDisplay}
               </WhatsAppLink>
             </li>

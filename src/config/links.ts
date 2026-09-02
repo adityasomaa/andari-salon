@@ -25,8 +25,12 @@ export type HubLink = {
   label: string;
   /** Absolute URL, or a path on this site. WhatsApp rows leave this empty. */
   href?: string;
-  /** Sent to the salon as "Tombol: ..." when the row opens WhatsApp. */
-  buttonLabel?: string;
+  /**
+   * Overrides the greeting for a WhatsApp row. Use it when the row promises
+   * something more specific than "I have a question", so the message matches
+   * the button that was pressed.
+   */
+  message?: string;
   /** Filled rather than outlined. One row at most. */
   primary?: boolean;
 };
@@ -48,7 +52,7 @@ export const HUB = {
       id: "wa-booking",
       kind: "whatsapp",
       label: "Booking lewat WhatsApp",
-      buttonLabel: "Booking dari halaman tautan",
+      message: `Halo ${SITE.name}, saya ingin booking.`,
       primary: true,
     },
     {

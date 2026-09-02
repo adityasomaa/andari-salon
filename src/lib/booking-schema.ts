@@ -7,10 +7,7 @@
 import { z } from "zod";
 
 import { BOOKING_WINDOW_DAYS, SERVICE_IDS, TIME_SLOTS } from "@/config/services";
-import { TEMPLATES } from "@/config/site";
 import { addDaysISO, isValidISODate, todayISO } from "./dates";
-
-const TEMPLATE_IDS = TEMPLATES.map((t) => t.id) as [string, ...string[]];
 
 /**
  * Indonesian mobile numbers, normalised before they are judged.
@@ -80,11 +77,6 @@ export const bookingSchema = z
       .refine((v) => (TIME_SLOTS as readonly string[]).includes(v), "Pilih salah satu jam."),
 
     notes: z.string().trim().max(400, "Catatan maksimal 400 karakter.").optional().default(""),
-
-    /** Provenance, so the composed message can say where it came from. */
-    pageUrl: z.string().trim().max(500).optional().default(""),
-    templateId: z.enum(TEMPLATE_IDS).optional(),
-    buttonLabel: z.string().trim().max(120).optional().default("Susun pesan WhatsApp"),
 
     /**
      * Honeypot. Positioned with `clip`, never `left:-9999px`, so it cannot
