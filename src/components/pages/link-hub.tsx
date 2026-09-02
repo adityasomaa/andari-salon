@@ -3,107 +3,72 @@
 /**
  * The link-in-bio page.
  *
- * Wears template 2's clothes: warm sand ground, 24px cards, pill controls,
- * medium weight, centred and compact, springy motion. It declares
- * `data-template="t2"` itself rather than going through TemplateShell, because
- * a link hub wants no site navigation, no footer and no preview switcher.
+ * One screen, no scrolling. Wordmark, one line, a stack of pills, nothing
+ * else: no banner graphic, no address card, no site chrome. Anything that
+ * would push the page past the fold has been cut rather than shrunk.
  *
- * Every row comes from src/config/links.ts. WhatsApp rows go through the same
- * WhatsAppLink component as the rest of the site, so a message sent from here
- * still says which page and which button it came from.
+ * Height uses 100svh, not 100vh. On a phone, 100vh is the height with the
+ * browser chrome hidden, so a 100vh page is taller than what you can actually
+ * see and scrolls by exactly the height of the address bar. svh is the
+ * smallest viewport height, which is the one that guarantees it fits.
+ *
+ * The page is deliberately not `overflow: hidden`. It fits at normal text
+ * size, so there is nothing to scroll to; if someone enlarges text well past
+ * default, scrolling is how they reach the last row, and trapping it would
+ * lock them out of it.
+ *
+ * Template 2's tokens: warm sand ground, pill controls, medium weight,
+ * springy motion. Rows come from src/config/links.ts.
  */
 
 import Link from "next/link";
 
-import { Art } from "@/components/shared/art";
 import { Wordmark } from "@/components/shared/logo";
-import { Reveal } from "@/components/shared/reveal";
-import { HoursText } from "@/components/shared/site-footer";
 import { WhatsAppLink } from "@/components/shared/whatsapp-link";
-import { COPY } from "@/config/copy";
 import { HUB, type HubLink } from "@/config/links";
-import { ADDRESS, LEGAL_NAV } from "@/config/site";
-import { cn } from "@/lib/utils";
+import { LEGAL_NAV } from "@/config/site";
 
 export function LinkHub() {
   return (
-    <div data-template="t2" className="min-h-screen-svh" style={{ background: "var(--t-bg)" }}>
-      <main id="main" className="mx-auto w-full max-w-[30rem] px-5 pt-10 pb-16 sm:pt-14">
-        <header className="flex flex-col items-center text-center">
-          {/* Same generated family as the site, kept small so it frames rather
-              than competes with the list. */}
-          <Reveal kind="spring-rise">
-            <div
-              className="relative mb-7 h-28 w-full overflow-hidden sm:h-32"
-              style={{ borderRadius: "var(--t-radius)" }}
-            >
-              <Art template="template-2" name="band" decorative sizes="(min-width: 640px) 30rem, 92vw" />
-              <div
-                aria-hidden
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "radial-gradient(80% 120% at 50% 50%, color-mix(in oklab, var(--t-bg) 55%, transparent), transparent 75%)",
-                }}
-              />
-            </div>
-          </Reveal>
+    <div
+      data-template="t2"
+      className="flex min-h-[100svh] flex-col items-center justify-center px-5 py-6 squat:py-4"
+      style={{ background: "var(--t-bg)" }}
+    >
+      <main
+        id="main"
+        className="flex w-full max-w-[26rem] flex-col items-center squat:max-w-[40rem]"
+        style={{ animation: "hub-in 520ms cubic-bezier(0.22,1,0.36,1) both" }}
+      >
+        <Wordmark
+          tone="olive"
+          width={190}
+          className="w-[150px] short:w-[128px] sm:w-[176px]"
+          priority
+        />
 
-          <Reveal kind="spring-rise" delay={0.05}>
-            <Wordmark tone="olive" width={190} className="w-[168px] sm:w-[190px]" priority />
-          </Reveal>
+        <p className="t-label mt-3 short:mt-2 squat:mt-1.5">{HUB.tagline}</p>
 
-          <Reveal kind="spring-rise" delay={0.1}>
-            <p className="t-label mt-4">{HUB.tagline}</p>
-          </Reveal>
-
-          <Reveal kind="spring-rise" delay={0.15}>
-            <p className="t-body mx-auto mt-2 text-center text-[length:var(--t-small)]">{HUB.intro}</p>
-          </Reveal>
-        </header>
-
-        <nav aria-label="Tautan Andari Salon" className="mt-8">
-          <ul className="grid gap-3">
-            {HUB.links.map((link, i) => (
+        <nav aria-label="Tautan Andari Salon" className="mt-7 w-full short:mt-5 squat:mt-4">
+          <ul className="grid gap-2.5 short:gap-2 squat:grid-cols-2">
+            {HUB.links.map((link) => (
               <li key={link.id}>
-                <Reveal kind="spring-rise" delay={0.2 + i * 0.05}>
-                  <Row link={link} />
-                </Reveal>
+                <Row link={link} />
               </li>
             ))}
           </ul>
         </nav>
 
-        <Reveal kind="spring-rise" delay={0.55}>
-          <section
-            className="t-card mt-8 p-5"
-            aria-label={`${HUB.addressTitle} dan ${HUB.hoursTitle}`}
-          >
-            <p className="t-label">{HUB.addressTitle}</p>
-            <address className="t-body mt-1.5 text-[length:var(--t-small)] not-italic">
-              {ADDRESS.full}
-            </address>
-
-            <p className="t-label mt-5">{HUB.hoursTitle}</p>
-            <HoursText className="mt-1.5" />
-          </section>
-        </Reveal>
-
-        <Reveal kind="fade" delay={0.65}>
-          <footer
-            className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-[0.78rem]"
-            style={{ color: "var(--t-fg-faint)" }}
-          >
-            {LEGAL_NAV.map((l) => (
-              <Link key={l.href} href={l.href} className="underline underline-offset-4">
-                {l.label}
-              </Link>
-            ))}
-            <span>
-              {new Date().getFullYear()} {COPY.footer.rights}
-            </span>
-          </footer>
-        </Reveal>
+        <p
+          className="mt-6 flex flex-wrap items-center justify-center gap-x-3 text-[0.72rem] short:mt-4 squat:mt-3"
+          style={{ color: "var(--t-fg-faint)" }}
+        >
+          {LEGAL_NAV.map((l) => (
+            <Link key={l.href} href={l.href} className="underline underline-offset-4">
+              {l.label}
+            </Link>
+          ))}
+        </p>
       </main>
     </div>
   );
@@ -111,67 +76,38 @@ export function LinkHub() {
 
 /* ------------------------------------------------------------------ row */
 
+const ROW_CLASS =
+  "flex w-full items-center justify-center gap-2.5 px-5 text-[0.95rem] font-medium " +
+  "h-[52px] short:h-[46px] short:text-[0.9rem] " +
+  "transition-transform duration-200 hover:-translate-y-px active:translate-y-0";
+
 function Row({ link }: { link: HubLink }) {
+  const style: React.CSSProperties = {
+    borderRadius: "var(--t-radius-pill)",
+    ...(link.primary
+      ? {
+          background: "var(--t-accent)",
+          color: "var(--t-accent-fg)",
+          border: "1px solid var(--t-accent)",
+        }
+      : {
+          background: "var(--t-surface)",
+          color: "var(--t-fg)",
+          border: "1px solid var(--t-line-strong)",
+        }),
+  };
+
   const inner = (
     <>
-      <span
-        aria-hidden
-        className="flex size-10 shrink-0 items-center justify-center rounded-full"
-        style={{
-          background: link.primary ? "color-mix(in oklab, var(--t-accent-fg) 22%, transparent)" : "var(--t-accent-soft)",
-          color: link.primary ? "var(--t-accent-fg)" : "var(--t-fg-muted)",
-        }}
-      >
-        <Icon kind={link.kind} />
-      </span>
-
-      <span className="min-w-0 flex-1">
-        <span className="block text-[0.98rem] leading-snug font-medium">{link.label}</span>
-        <span
-          className="mt-0.5 block text-[0.82rem] leading-snug"
-          style={{ color: link.primary ? "color-mix(in oklab, var(--t-accent-fg) 78%, transparent)" : "var(--t-fg-faint)" }}
-        >
-          {link.note}
-        </span>
-      </span>
-
-      <svg
-        aria-hidden
-        viewBox="0 0 16 16"
-        className="size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.3"
-        strokeLinecap="round"
-      >
-        <path d="M2 8h11M9 4l4 4-4 4" />
-      </svg>
+      <Icon kind={link.kind} />
+      <span>{link.label}</span>
     </>
   );
-
-  const className = cn(
-    "group flex w-full items-center gap-3.5 p-4 text-left transition-[transform,box-shadow,background-color] duration-300",
-    "hover:-translate-y-0.5 active:translate-y-0",
-  );
-
-  const style: React.CSSProperties = link.primary
-    ? {
-        background: "var(--t-accent)",
-        color: "var(--t-accent-fg)",
-        border: "1px solid var(--t-accent)",
-        borderRadius: "var(--t-radius)",
-      }
-    : {
-        background: "var(--t-surface)",
-        color: "var(--t-fg)",
-        border: "1px solid var(--t-line)",
-        borderRadius: "var(--t-radius)",
-      };
 
   if (link.kind === "whatsapp") {
     return (
       <WhatsAppLink
-        className={className}
+        className={ROW_CLASS}
         style={style}
         buttonLabel={link.buttonLabel ?? link.label}
         fallbackPath="/booking"
@@ -181,23 +117,16 @@ function Row({ link }: { link: HubLink }) {
     );
   }
 
-  const external = link.href?.startsWith("http");
-  if (external) {
+  if (link.href?.startsWith("http")) {
     return (
-      <a
-        href={link.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={className}
-        style={style}
-      >
+      <a href={link.href} target="_blank" rel="noopener noreferrer" className={ROW_CLASS} style={style}>
         {inner}
       </a>
     );
   }
 
   return (
-    <Link href={link.href ?? "/"} className={className} style={style}>
+    <Link href={link.href ?? "/"} className={ROW_CLASS} style={style}>
       {inner}
     </Link>
   );
@@ -208,12 +137,13 @@ function Row({ link }: { link: HubLink }) {
 function Icon({ kind }: { kind: HubLink["kind"] }) {
   const common = {
     viewBox: "0 0 24 24",
-    className: "size-[18px]",
+    className: "size-[17px] shrink-0",
     fill: "none",
     stroke: "currentColor",
-    strokeWidth: 1.5,
+    strokeWidth: 1.6,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
+    "aria-hidden": true,
   };
 
   if (kind === "whatsapp") {
@@ -252,7 +182,7 @@ function Icon({ kind }: { kind: HubLink["kind"] }) {
   if (kind === "services") {
     return (
       <svg {...common}>
-        <path d="M4 5h16M4 12h16M4 19h10" />
+        <path d="M4 6h16M4 12h16M4 18h10" />
       </svg>
     );
   }

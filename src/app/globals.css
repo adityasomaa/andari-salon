@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @import "../styles/templates.css";
 
+/* Short viewports: phones in landscape, small phones, and any window whose
+   height is tight. The link hub uses this to shrink itself rather than spill
+   past the fold. */
+@custom-variant short (@media (max-height: 700px));
+
+/* Short and wide, which in practice means a phone held sideways. Six stacked
+   rows cannot fit 360px of height, so the hub splits them into two columns
+   instead of shrinking them below a comfortable tap target. */
+@custom-variant squat (@media (max-height: 560px) and (min-width: 560px));
+
 /* ---------------------------------------------------------------------------
    Andari Salon, shared foundation.
 
@@ -157,6 +167,21 @@
 }
 
 @layer components {
+  /* Entrance for the link hub. A single CSS animation rather than a motion
+     stagger: the page is six rows on one screen, and CSS keyframes keep
+     running when a tab is backgrounded, which requestAnimationFrame does not.
+     The global prefers-reduced-motion rule collapses it to nothing. */
+  @keyframes hub-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   .skip-link {
     position: fixed;
     top: 0.75rem;

@@ -20,15 +20,36 @@ all of which canonicalise to andarisalon.id)
 
 ## The link hub at /booking
 
-`/booking` is the page for the Instagram bio: one short list of every way to
-reach the salon. It wears template 2's clothes (warm sand, 24px cards, pill
-controls, springy motion) but has no site navigation, no footer and no preview
-switcher, because a link hub wants none of those.
+`/booking` is the page for the Instagram bio: the wordmark, one line, and a
+stack of pills. Nothing else. No banner graphic, no address card, no site
+navigation, no footer beyond two legal links.
+
+**It fits one screen and does not scroll.** That is the constraint the page is
+built around, so anything that would push it past the fold gets cut rather than
+shrunk. Verified at 320x568, 360x640, 375x667, 390x844, 414x896, 768x1024 and
+1440x900, plus landscape at 667x375, 740x360 and 844x390: zero vertical
+overflow at every one.
+
+Two details make that hold:
+
+- Height is `100svh`, not `100vh`. On a phone `100vh` is the height with the
+  browser chrome *hidden*, so a `100vh` page is taller than what you can
+  actually see and scrolls by exactly the height of the address bar. `svh` is
+  the smallest viewport height, which is the one that guarantees a fit.
+- Held sideways, six stacked rows cannot fit 360px of height, so a `squat`
+  breakpoint (short and wide) splits them into two columns rather than
+  shrinking the rows below a comfortable tap target.
+
+The page is deliberately *not* `overflow: hidden`. At normal text size there is
+nothing to scroll to; if someone enlarges text well past default, scrolling is
+how they reach the last row, and trapping it would lock them out of it.
 
 Rows live in `src/config/links.ts`. Add, remove or reorder entries there and
-the page follows; nothing else needs editing. The WhatsApp row goes through the
-same `WhatsAppLink` component as the rest of the site, so a message sent from
-the hub still tells the salon which page and which button it came from.
+the page follows. Keep labels to one short line and the list short: six is
+comfortable, eight is the practical ceiling before the fold becomes a fight.
+The WhatsApp row goes through the same `WhatsAppLink` component as the rest of
+the site, so a message sent from the hub still tells the salon which page and
+which button it came from.
 
 Links into the site resolve through `sitePath()`, which points at the chosen
 template while the three previews coexist and at the flat paths once

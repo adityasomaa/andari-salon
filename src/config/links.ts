@@ -1,9 +1,13 @@
 /**
  * The link hub served at /booking.
  *
- * This is the page meant to sit in the Instagram bio: one short list of every
- * way to reach the salon. Add, remove or reorder entries here and the page
- * follows. Nothing else needs editing.
+ * This is the page meant to sit in the Instagram bio: the shortest possible
+ * list of ways to reach the salon, sized to fit one screen without scrolling.
+ * Add, remove or reorder entries here and the page follows.
+ *
+ * Keep the list short. The page is built to fit a phone screen exactly, so
+ * every row added is height taken from somewhere else. Six is comfortable,
+ * eight is the practical ceiling.
  *
  * Same rule as the rest of the site: every destination is a channel that
  * actually exists. No placeholder rows, no icons pointing at empty accounts.
@@ -17,14 +21,13 @@ export type LinkKind = "whatsapp" | "instagram" | "site" | "maps" | "form" | "se
 export type HubLink = {
   id: string;
   kind: LinkKind;
+  /** Kept to one short line: it has to sit on a single row on a 360px phone. */
   label: string;
-  /** One short line under the label. Never a claim. */
-  note: string;
   /** Absolute URL, or a path on this site. WhatsApp rows leave this empty. */
   href?: string;
   /** Sent to the salon as "Tombol: ..." when the row opens WhatsApp. */
   buttonLabel?: string;
-  /** Rendered larger, at the top of the list. One row at most. */
+  /** Filled rather than outlined. One row at most. */
   primary?: boolean;
 };
 
@@ -38,16 +41,13 @@ export function sitePath(path: string): string {
 }
 
 export const HUB = {
-  /** Shown under the wordmark. */
   tagline: "Salon rambut di Denpasar Barat",
-  intro: "Semua cara menghubungi kami ada di sini.",
 
   links: [
     {
       id: "wa-booking",
       kind: "whatsapp",
       label: "Booking lewat WhatsApp",
-      note: "Kirim tanggal dan jam yang Anda inginkan.",
       buttonLabel: "Booking dari halaman tautan",
       primary: true,
     },
@@ -55,44 +55,33 @@ export const HUB = {
       id: "form",
       kind: "form",
       label: "Isi formulir booking",
-      note: "Pilih layanan, tanggal, dan jam dulu, baru kirim.",
       href: sitePath("/booking"),
     },
     {
       id: "layanan",
       kind: "services",
       label: "Lihat layanan",
-      note: "Potong, pewarnaan, perawatan rambut, dan lainnya.",
       href: sitePath("/layanan"),
     },
     {
       id: "instagram",
       kind: "instagram",
-      label: `Instagram ${CONTACT.instagramHandle}`,
-      note: "Kabar terbaru dari salon.",
+      label: CONTACT.instagramHandle,
       href: CONTACT.instagramUrl,
     },
     {
       id: "maps",
       kind: "maps",
       label: "Lokasi di Google Maps",
-      note: ADDRESS.line1 + ", " + ADDRESS.village,
       href: ADDRESS.mapsUrl,
     },
     {
       id: "website",
       kind: "site",
       label: "Website Andari Salon",
-      note: "Layanan, lokasi, dan jam buka.",
       href: sitePath(""),
     },
   ] satisfies HubLink[],
-
-  /** Small print under the list. */
-  addressTitle: "Alamat",
-  hoursTitle: "Jam buka",
-  copy: "Salin alamat",
-  copied: "Alamat tersalin",
 
   meta: {
     title: "Tautan Andari Salon",
