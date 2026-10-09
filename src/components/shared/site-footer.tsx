@@ -4,8 +4,8 @@
  * Footer, so every page ends on an action.
  *
  * The CTA swaps target when the visitor is already on the page it points at:
- * on /booking, "Booking sekarang" would send them nowhere, so it becomes a
- * direct WhatsApp message instead.
+ * on the booking form, "Booking sekarang" would send them nowhere, so it
+ * becomes a direct WhatsApp message instead.
  *
  * Also the second place the address and the opening-hours status appear, since
  * a salon is somewhere people physically go.
@@ -13,55 +13,43 @@
 
 import { usePathname } from "next/navigation";
 
-import { COPY } from "@/config/copy";
-import { ADDRESS, CONTACT, LEGAL_NAV, NAV, OPENING_HOURS, SITE, SOCIALS } from "@/config/site";
+import { href } from "@/config/i18n";
+import { ADDRESS, CONTACT, OPENING_HOURS, SITE, SOCIALS } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 import { useCookieConsent } from "./cookie-consent";
+import { useCopy, useLocale } from "./locale-context";
 import { Wordmark } from "./logo";
 import { TransitionLink } from "./page-transition";
 import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
-import { useTemplate } from "./template-context";
 
 export function SiteFooter() {
-  const template = useTemplate();
-  const key = template?.key ?? "t1";
-  const base = template?.base ?? "";
+  const copy = useCopy();
+  const locale = useLocale();
   const pathname = usePathname();
   const { open: openCookies } = useCookieConsent();
 
-  const bookingHref = `${base}/booking`;
-  const onBooking = pathname === bookingHref;
+  const onBooking = pathname === href("booking", locale);
+  const F = copy.footerCta;
 
   // Already on the destination: point somewhere useful instead.
   const ctaCopy = onBooking
-    ? {
-        label: COPY.footerCta.label,
-        headline: COPY.footerCta.alt.headline,
-        description: COPY.footerCta.alt.description,
-        cta: COPY.footerCta.alt.cta,
-      }
-    : {
-        label: COPY.footerCta.label,
-        headline: COPY.footerCta.headline,
-        description: COPY.footerCta.description,
-        cta: COPY.footerCta.cta,
-      };
+    ? { label: F.label, headline: F.alt.headline, description: F.alt.description, cta: F.alt.cta }
+    : { label: F.label, headline: F.headline, description: F.description, cta: F.cta };
 
-  const navItems = NAV.map((n) => ({ ...n, href: `${base}${n.href}` }));
+  const navItems = [
+    ...copy.nav.items,
+    { key: "booking" as const, label: copy.footer.bookingForm },
+  ].map((n) => ({ ...n, href: href(n.key, locale) }));
 
   return (
     <footer
       className="relative"
-      style={{ background: key === "t2" ? "var(--t-bg-alt)" : "var(--t-bg)", borderTop: "1px solid var(--t-line)" }}
+      style={{ background: "var(--t-bg-alt)", borderTop: "1px solid var(--t-line)" }}
     >
       <div className="t-shell" style={{ paddingBlock: "var(--t-section-y)" }}>
-        <SectionHeader
-          copy={ctaCopy}
-          index={key === "t1" ? "05" : undefined}
-          ctaVariant={key === "t1" ? "quiet" : "primary"}
-        />
+        <SectionHeader copy={ctaCopy} />
       </div>
 
       <div className="t-shell">
@@ -69,12 +57,12 @@ export function SiteFooter() {
       </div>
 
       <div className="t-shell grid gap-10 py-12 lg:grid-cols-12 lg:gap-8">
-        <div className={cn("lg:col-span-4")}>
-          <Wordmark tone={key === "t3" ? "bone" : "olive"} width={150} className="w-[140px]" />
-          <p className="t-body mt-4 max-w-xs text-[length:var(--t-small)]">{COPY.brand.tagline}</p>
+        <div className="lg:col-span-4">
+          <Wordmark tone="olive" width={150} className="w-[140px]" />
+          <p className="t-body mt-4 max-w-xs text-[length:var(--t-small)]">{copy.brand.tagline}</p>
         </div>
 
-        <FooterCol title={COPY.footer.addressTitle} className="lg:col-span-3">
+        <FooterCol title={copy.footer.addressTitle} className="lg:col-span-3">
           <address className="t-body text-[length:var(--t-small)] not-italic">
             {ADDRESS.line1}
             <br />
@@ -88,11 +76,11 @@ export function SiteFooter() {
             rel="noopener noreferrer"
             className="mt-3 inline-block text-[length:var(--t-small)] underline underline-offset-4"
           >
-            {COPY.location_block.openMaps}
+            {copy.location_block.openMaps}
           </a>
         </FooterCol>
 
-        <FooterCol title={COPY.footer.contactTitle} className="lg:col-span-2">
+        <FooterCol title={copy.footer.contactTitle} className="lg:col-span-2">
           <ul className="grid gap-1.5 text-[length:var(--t-small)]">
             <li>
               <a
@@ -118,11 +106,11 @@ export function SiteFooter() {
             ))}
           </ul>
 
-          <p className="t-label mt-5">{COPY.footer.hoursTitle}</p>
+          <p className="t-label mt-5">{copy.footer.hoursTitle}</p>
           <HoursText className="mt-1.5" />
         </FooterCol>
 
-        <FooterCol title={COPY.footer.navTitle} className="lg:col-span-3">
+        <FooterCol title={copy.footer.navTitle} className="lg:col-span-3">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1 lg:gap-5">
             <ul className="grid gap-1.5 text-[length:var(--t-small)]">
               {navItems.map((n) => (
@@ -134,9 +122,9 @@ export function SiteFooter() {
               ))}
             </ul>
             <ul className="grid gap-1.5 text-[length:var(--t-small)]">
-              {LEGAL_NAV.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} className="hover:underline hover:underline-offset-4">
+              {copy.legalNav.map((l) => (
+                <li key={l.key}>
+                  <a href={href(l.key, locale)} className="hover:underline hover:underline-offset-4">
                     {l.label}
                   </a>
                 </li>
@@ -147,7 +135,7 @@ export function SiteFooter() {
                   onClick={openCookies}
                   className="text-left hover:underline hover:underline-offset-4"
                 >
-                  {COPY.cookies.settingsLink}
+                  {copy.cookies.settingsLink}
                 </button>
               </li>
             </ul>
@@ -159,7 +147,7 @@ export function SiteFooter() {
         <hr className="t-rule" />
         <div className="flex flex-wrap items-center justify-between gap-3 py-6 text-[0.78rem]" style={{ color: "var(--t-fg-faint)" }}>
           <p>
-            {new Date().getFullYear()} {COPY.footer.rights}
+            {new Date().getFullYear()} {copy.footer.rights}
           </p>
           <p>{SITE.url.replace("https://", "")}</p>
         </div>
@@ -178,7 +166,7 @@ function FooterCol({
   className?: string;
 }) {
   return (
-    <Reveal kind="fade" className={className}>
+    <Reveal kind="fade" className={cn(className)}>
       <p className="t-label mb-3">{title}</p>
       {children}
     </Reveal>
@@ -190,12 +178,13 @@ function FooterCol({
  * and switches to a real schedule the moment OPENING_HOURS is filled in.
  */
 export function HoursText({ className }: { className?: string }) {
+  const { hours } = useCopy();
   if (OPENING_HOURS.status === "unset") {
     return (
       <div className={cn("text-[length:var(--t-small)]", className)}>
-        <p style={{ color: "var(--t-fg-muted)" }}>{OPENING_HOURS.unknownLabel}</p>
+        <p style={{ color: "var(--t-fg-muted)" }}>{hours.unknownLabel}</p>
         <p className="mt-0.5" style={{ color: "var(--t-fg-faint)" }}>
-          {OPENING_HOURS.unknownHint}
+          {hours.unknownHint}
         </p>
       </div>
     );
@@ -204,7 +193,7 @@ export function HoursText({ className }: { className?: string }) {
     <ul className={cn("grid gap-1 text-[length:var(--t-small)]", className)}>
       {OPENING_HOURS.days.map((d) => (
         <li key={d.day} className="flex justify-between gap-4">
-          <span>{d.label}</span>
+          <span>{hours.days[d.day]}</span>
           <span className="tabular-nums" style={{ color: "var(--t-fg-muted)" }}>
             {d.opens}–{d.closes}
           </span>

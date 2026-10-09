@@ -1,31 +1,42 @@
 "use client";
 
 /**
- * The service list, in two densities and three layouts.
+ * The treatment menu, in two densities.
  *
- * `summary` is the home-page version, four category cards. `full` is the
- * services page, every item under its category. Same data either way.
- *
- * A newly opened salon has no menu yet, so the sample notice is not fine
- * print: it sits at the top of the list, in normal reading size.
- *
- * Layouts:
- *   t1  ruled rows, no card chrome, numbers in the margin
- *   t2  rounded cards on a tinted ground, tile graphic per category
- *   t3  hairline-boxed rows with a thin index column
+ * `summary` is the home-page version: one card per group with the item names
+ * as chips. `full` is the treatment page: every item with its price. Items
+ * priced by hair length show all four prices under the name, with the sheet's
+ * own column headings.
  */
 
-import { COPY } from "@/config/copy";
-import { SERVICES_ARE_SAMPLE, SERVICE_CATEGORIES } from "@/config/services";
-import type { TemplateId } from "@/config/site";
+import {
+  LENGTHS,
+  LENGTH_LABELS,
+  SERVICES_ARE_SAMPLE,
+  SERVICE_CATEGORIES,
+  formatRupiah,
+  type Service,
+} from "@/config/services";
+import type { Locale } from "@/config/i18n";
 import { cn } from "@/lib/utils";
 
 import { Art, type ArtName } from "./art";
-import { Reveal, RuleDraw } from "./reveal";
-import { templateInfo } from "./template-context";
+import { useCopy, useLocale } from "./locale-context";
+import { Reveal } from "./reveal";
 
-export function SampleNotice({ className }: { className?: string }) {
-  if (!SERVICES_ARE_SAMPLE) return null;
+/** Dashed notice above a list whose contents are still placeholders. */
+export function SampleNotice({
+  text,
+  show = SERVICES_ARE_SAMPLE,
+  className,
+}: {
+  /** Defaults to the treatment-list notice. */
+  text?: string;
+  show?: boolean;
+  className?: string;
+}) {
+  const copy = useCopy();
+  if (!show) return null;
   return (
     <Reveal kind="fade" className={className}>
       <p
@@ -37,103 +48,30 @@ export function SampleNotice({ className }: { className?: string }) {
         }}
         data-testid="sample-notice"
       >
-        {COPY.services.sampleNotice}
+        {text ?? copy.services.sampleNotice}
       </p>
     </Reveal>
   );
 }
 
 export function ServicesBlock({
-  template,
-  variant,
-  className,
-}: {
-  template: TemplateId;
-  variant: "summary" | "full";
-  className?: string;
-}) {
-  const key = templateInfo(template).key;
-
-  if (key === "t1") return <T1 variant={variant} className={className} />;
-  if (key === "t2") return <T2 template={template} variant={variant} className={className} />;
-  return <T3 variant={variant} className={className} />;
-}
-
-/* ------------------------------------------------------ t1, ruled rows */
-
-function T1({
   variant,
   className,
 }: {
   variant: "summary" | "full";
   className?: string;
 }) {
+  const locale = useLocale();
+
   return (
-    <div className={cn("grid", className)}>
+    <div className={cn("grid gap-4 sm:grid-cols-2", variant === "summary" && "lg:grid-cols-3", className)}>
       {SERVICE_CATEGORIES.map((c, i) => (
-        <Reveal key={c.id} kind="blur-rise" delay={i * 0.05}>
-          <div
-            className="grid gap-6 py-[clamp(2rem,4vw,3.5rem)] lg:grid-cols-12 lg:gap-8"
-            style={{ borderTop: "1px solid var(--t-line)" }}
-          >
-            <div className="flex items-baseline gap-5 lg:col-span-4">
-              <span className="t-label tabular-nums">{c.number}</span>
-              <h3 className="text-[length:var(--t-h3)] leading-tight font-normal">{c.name}</h3>
-            </div>
-
-            <p className="t-body text-[length:var(--t-small)] lg:col-span-3">{c.summary}</p>
-
-            {variant === "full" ? (
-              <ul className="grid gap-3 lg:col-span-5">
-                {c.items.map((s) => (
-                  <li key={s.id} className="grid gap-1">
-                    <span className="text-[length:var(--t-body)]">{s.name}</span>
-                    <span className="text-[0.85rem]" style={{ color: "var(--t-fg-faint)" }}>
-                      {s.note}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-[length:var(--t-small)] lg:col-span-5" style={{ color: "var(--t-fg-faint)" }}>
-                {c.items.map((s) => s.name).join(" · ")}
-              </p>
-            )}
-          </div>
-        </Reveal>
-      ))}
-      <hr className="t-rule" />
-    </div>
-  );
-}
-
-/* -------------------------------------------------- t2, rounded cards */
-
-function T2({
-  template,
-  variant,
-  className,
-}: {
-  template: TemplateId;
-  variant: "summary" | "full";
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "grid gap-4",
-        variant === "summary" ? "sm:grid-cols-2" : "sm:grid-cols-2",
-        className,
-      )}
-    >
-      {SERVICE_CATEGORIES.map((c, i) => (
-        <Reveal key={c.id} kind="spring-rise" delay={i * 0.06}>
+        <Reveal key={c.id} kind="spring-rise" delay={(i % 3) * 0.06}>
           <article className="t-card group h-full overflow-hidden transition-transform duration-300 hover:-translate-y-1">
-            <div className="relative aspect-[16/9] overflow-hidden" style={{ borderRadius: "0" }}>
+            <div className={cn("relative overflow-hidden", variant === "summary" ? "aspect-[16/7]" : "aspect-[16/6]")}>
               <Art
-                template={template}
-                name={`tile-${i as 0 | 1 | 2 | 3}` as ArtName}
-                sizes="(min-width: 640px) 40vw, 92vw"
+                name={`tile-${(i % 4) as 0 | 1 | 2 | 3}` as ArtName}
+                sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
                 decorative
               />
             </div>
@@ -145,22 +83,15 @@ function T2({
                 >
                   {c.number}
                 </span>
-                <h3 className="text-[length:var(--t-h3)] font-medium">{c.name}</h3>
+                <h3 className="text-[length:var(--t-h3)] font-medium">{c.name[locale]}</h3>
               </div>
-              <p className="t-body text-[length:var(--t-small)]">{c.summary}</p>
+              <p className="t-body text-[length:var(--t-small)]">{c.summary[locale]}</p>
 
               {variant === "full" ? (
-                <ul className="mt-1 grid gap-2.5">
+                <ul className="mt-1 grid">
                   {c.items.map((s) => (
-                    <li
-                      key={s.id}
-                      className="grid gap-0.5 pt-2.5"
-                      style={{ borderTop: "1px solid var(--t-line)" }}
-                    >
-                      <span className="text-[0.95rem] font-medium">{s.name}</span>
-                      <span className="text-[0.85rem]" style={{ color: "var(--t-fg-faint)" }}>
-                        {s.note}
-                      </span>
+                    <li key={s.id} className="py-3" style={{ borderTop: "1px solid var(--t-line)" }}>
+                      <PriceRow service={s} locale={locale} />
                     </li>
                   ))}
                 </ul>
@@ -172,7 +103,7 @@ function T2({
                       className="rounded-full px-3 py-1.5 text-[0.8rem]"
                       style={{ background: "var(--t-bg-alt)", color: "var(--t-fg-muted)" }}
                     >
-                      {s.name}
+                      {s.name[locale]}
                     </li>
                   ))}
                 </ul>
@@ -185,56 +116,48 @@ function T2({
   );
 }
 
-/* --------------------------------------------- t3, hairline framed rows */
+function PriceRow({ service: s, locale }: { service: Service; locale: Locale }) {
+  const name = (
+    <span className="grid gap-0.5">
+      <span className="text-[0.95rem] font-medium">{s.name[locale]}</span>
+      {s.note ? (
+        <span className="text-[0.82rem]" style={{ color: "var(--t-fg-faint)" }}>
+          {s.note[locale]}
+        </span>
+      ) : null}
+    </span>
+  );
 
-function T3({
-  variant,
-  className,
-}: {
-  variant: "summary" | "full";
-  className?: string;
-}) {
+  if (typeof s.price === "number") {
+    return (
+      <div className="flex items-baseline justify-between gap-4">
+        {name}
+        <span className="shrink-0 text-[0.92rem] tabular-nums">{formatRupiah(s.price)}</span>
+      </div>
+    );
+  }
+
+  const prices = s.price;
   return (
-    <div className={cn("grid gap-px", className)} style={{ background: "var(--t-line)" }}>
-      {SERVICE_CATEGORIES.map((c, i) => (
-        <Reveal key={c.id} kind="fade" delay={i * 0.08}>
-          <div
-            className="grid gap-6 p-[clamp(1.25rem,3vw,2.5rem)] md:grid-cols-[6rem_minmax(0,1fr)_minmax(0,1.1fr)] md:gap-10"
-            style={{ background: "var(--t-bg)" }}
-          >
-            <div className="flex items-start gap-4 md:block">
-              <span className="t-label tabular-nums">{c.number}</span>
-              <RuleDraw className="mt-3 hidden w-8 md:block" delay={0.1} />
-            </div>
-
-            <div className="grid gap-2">
-              <h3 className="text-[length:var(--t-h3)] font-normal tracking-[0.02em]">{c.name}</h3>
-              <p className="t-body text-[length:var(--t-small)]">{c.summary}</p>
-            </div>
-
-            {variant === "full" ? (
-              <ul className="grid gap-0">
-                {c.items.map((s, j) => (
-                  <li
-                    key={s.id}
-                    className="grid gap-0.5 py-3"
-                    style={{ borderTop: j === 0 ? "none" : "1px solid var(--t-line)" }}
-                  >
-                    <span className="text-[length:var(--t-body)]">{s.name}</span>
-                    <span className="text-[0.82rem]" style={{ color: "var(--t-fg-faint)" }}>
-                      {s.note}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-[length:var(--t-small)] leading-relaxed" style={{ color: "var(--t-fg-faint)" }}>
-                {c.items.map((s) => s.name).join(", ")}
-              </p>
-            )}
+    <div className="grid gap-2">
+      <div className="flex items-baseline justify-between gap-4">
+        {name}
+        {s.from ? (
+          <span className="t-label shrink-0" style={{ color: "var(--t-fg-faint)" }}>
+            {locale === "en" ? "Starting from" : "Mulai dari"}
+          </span>
+        ) : null}
+      </div>
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5 min-[420px]:grid-cols-4">
+        {LENGTHS.map((l) => (
+          <div key={l} className="grid gap-0.5">
+            <dt className="text-[0.72rem]" style={{ color: "var(--t-fg-faint)" }}>
+              {LENGTH_LABELS[l]}
+            </dt>
+            <dd className="text-[0.88rem] tabular-nums">{formatRupiah(prices[l])}</dd>
           </div>
-        </Reveal>
-      ))}
+        ))}
+      </dl>
     </div>
   );
 }

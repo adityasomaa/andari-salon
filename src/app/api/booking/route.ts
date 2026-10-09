@@ -13,7 +13,8 @@
 
 import { NextResponse } from "next/server";
 
-import { bookingSchema, collectErrors } from "@/lib/booking-schema";
+import { isLocale } from "@/config/i18n";
+import { collectErrors, makeBookingSchema } from "@/lib/booking-schema";
 import { buildBookingMessage, waHref } from "@/lib/whatsapp";
 
 export const runtime = "nodejs";
@@ -27,7 +28,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, errors: {} }, { status: 400 });
   }
 
-  const parsed = bookingSchema.safeParse(raw);
+  // The language only picks the wording of errors and of the message; the
+  // schema validates it again like every other field.
+  const claimed = (raw as { locale?: unknown } | null)?.locale;
+  const parsed = makeBookingSchema(isLocale(claimed) ? claimed : "id").safeParse(raw);
   if (!parsed.success) {
     return NextResponse.json(
       { ok: false, errors: collectErrors(parsed.error) },
@@ -43,14 +47,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, href: null, message: "" }, { status: 200 });
   }
 
-  const message = buildBookingMessage({
-    name: data.name,
-    phone: data.phone,
-    serviceId: data.serviceId,
-    date: data.date,
-    time: data.time,
-    notes: data.notes,
-  });
+  const message = buildBookingMessage(
+    {
+      name: data.name,
+      phone: data.phone,
+      serviceId: data.serviceId,
+      date: data.date,
+      time: data.time,
+      notes: data.notes,
+    },
+    data.locale,
+  );
 
   return NextResponse.json({ ok: true, href: waHref(message), message });
 }

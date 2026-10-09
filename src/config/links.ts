@@ -5,6 +5,9 @@
  * list of ways to reach the salon, sized to fit one screen without scrolling.
  * Add, remove or reorder entries here and the page follows.
  *
+ * Indonesian only. It is one screen of buttons for the salon's own Instagram
+ * audience; the site it links to has the language switch.
+ *
  * Keep the list short. The page is built to fit a phone screen exactly, so
  * every row added is height taken from somewhere else. Six is comfortable,
  * eight is the practical ceiling.
@@ -13,8 +16,9 @@
  * actually exists. No placeholder rows, no icons pointing at empty accounts.
  */
 
+import { getCopy } from "./copy";
+import { href } from "./i18n";
 import { ADDRESS, CONTACT, SITE } from "./site";
-import { LIVE_TEMPLATE, PREVIEW_MODE } from "./preview";
 
 export type LinkKind = "whatsapp" | "instagram" | "site" | "maps" | "form" | "services";
 
@@ -35,15 +39,6 @@ export type HubLink = {
   primary?: boolean;
 };
 
-/**
- * The site's own pages live under the chosen template while the three previews
- * coexist, so links into the site resolve through here rather than being
- * written out by hand.
- */
-export function sitePath(path: string): string {
-  return PREVIEW_MODE ? `/${LIVE_TEMPLATE}${path}` : path || "/";
-}
-
 export const HUB = {
   tagline: "Salon rambut di Denpasar Barat",
 
@@ -52,20 +47,20 @@ export const HUB = {
       id: "wa-booking",
       kind: "whatsapp",
       label: "Booking lewat WhatsApp",
-      message: `Halo ${SITE.name}, saya ingin booking.`,
+      message: getCopy("id").wa.booking,
       primary: true,
     },
     {
       id: "form",
       kind: "form",
       label: "Isi formulir booking",
-      href: sitePath("/booking"),
+      href: href("booking", "id"),
     },
     {
-      id: "layanan",
+      id: "treatment",
       kind: "services",
-      label: "Lihat layanan",
-      href: sitePath("/layanan"),
+      label: "Lihat treatment",
+      href: href("treatment", "id"),
     },
     {
       id: "instagram",
@@ -83,7 +78,7 @@ export const HUB = {
       id: "website",
       kind: "site",
       label: "Website Andari Salon",
-      href: sitePath(""),
+      href: href("home", "id"),
     },
   ] satisfies HubLink[],
 

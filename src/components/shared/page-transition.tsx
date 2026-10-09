@@ -31,6 +31,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { ROUTES } from "@/config/i18n";
 import { cn } from "@/lib/utils";
 
 import { useTemplate } from "./template-context";
@@ -140,7 +141,7 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
 
       // Arriving at home gets the arrival loader; everything else gets the
       // shorter between-pages curtain.
-      const isHome = Boolean(template) && target === template!.base;
+      const isHome = Object.values(ROUTES.home).includes(target as never);
       const nextMode: "entry" | "curtain" = isHome ? "entry" : "curtain";
       setMode(nextMode);
       const closeMs = isHome ? timing.entry * 0.55 : timing.close;
@@ -168,7 +169,7 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
         busyRef.current = false;
       })();
     },
-    [pathname, router, addLock, setMenuOpen, closePopover, timing, template],
+    [pathname, router, addLock, setMenuOpen, closePopover, timing],
   );
 
   const api = useMemo<TransitionApi>(() => ({ go, busy: phase !== "idle" }), [go, phase]);

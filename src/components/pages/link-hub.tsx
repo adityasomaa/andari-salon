@@ -25,10 +25,12 @@ import Link from "next/link";
 
 import { Wordmark } from "@/components/shared/logo";
 import { WhatsAppLink } from "@/components/shared/whatsapp-link";
+import { useCopy } from "@/components/shared/locale-context";
+import { href } from "@/config/i18n";
 import { HUB, type HubLink } from "@/config/links";
-import { LEGAL_NAV } from "@/config/site";
 
 export function LinkHub() {
+  const copy = useCopy();
   return (
     <div
       data-template="t2"
@@ -63,8 +65,8 @@ export function LinkHub() {
           className="mt-6 flex flex-wrap items-center justify-center gap-x-3 text-[0.72rem] short:mt-4 squat:mt-3"
           style={{ color: "var(--t-fg-faint)" }}
         >
-          {LEGAL_NAV.map((l) => (
-            <Link key={l.href} href={l.href} className="underline underline-offset-4">
+          {copy.legalNav.map((l) => (
+            <Link key={l.key} href={href(l.key, "id")} className="underline underline-offset-4">
               {l.label}
             </Link>
           ))}

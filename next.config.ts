@@ -15,6 +15,31 @@ const nextConfig: NextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
+  experimental: {
+    // Two root layouts, (id) and (en), leave no single layout to render a
+    // 404 inside, so app/global-not-found.tsx provides its own document.
+    globalNotFound: true,
+  },
+  /**
+   * The three design previews are gone; the chosen one now lives at the root.
+   * Anything still linking to a preview, or to the old "Layanan" slug, lands
+   * on the page it meant.
+   */
+  async redirects() {
+    const previews = ["/template-1", "/template-2", "/template-3"];
+    const pages: Array<[string, string]> = [
+      ["", "/"],
+      ["/layanan", "/treatment"],
+      ["/booking", "/reservasi"],
+      ["/kontak", "/kontak"],
+    ];
+    return [
+      ...previews.flatMap((p) =>
+        pages.map(([from, to]) => ({ source: `${p}${from}`, destination: to, permanent: true })),
+      ),
+      { source: "/layanan", destination: "/treatment", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

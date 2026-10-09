@@ -1,0 +1,10 @@
+import type { Metadata } from "next";
+
+import { PrivacyContent } from "@/components/pages/legal";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata("privacy", "en");
+
+export default function Page() {
+  return <PrivacyContent locale="en" />;
+}

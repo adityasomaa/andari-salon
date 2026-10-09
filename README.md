@@ -1,181 +1,122 @@
 # Andari Salon
 
-Three complete design directions for a salon that has just opened in Tegal
-Kertha, Denpasar Barat. One deployment, one content layer, three different
-sites on top of it.
+Website for a hair salon in Tegal Kertha, Denpasar Barat, in Indonesian and
+English.
 
 **Live:** https://andarisalon.id
 (also reachable at https://andari-salon.vercel.app,
 https://andarisalon.vercel.app and https://andarisalon.onyxcreative.asia,
 all of which canonicalise to andarisalon.id)
 
-- `/` is the chooser. Three cards, one per direction. It is a tool for picking,
-  not part of any design, and it disappears when preview mode is switched off.
-- `/template-1`, `/template-2`, `/template-3` are three whole sites. Each has
-  home, layanan, booking and kontak.
-- A small floating control at the bottom right jumps between the three on the
-  same sub-page, so the same screen can be compared side by side.
+The project started as three competing design directions. The client chose
+**Template 2, Hangat dan Ramah** (warm sand ground, 24px rounded cards, pill
+controls, centred compositions, springy motion), and that design now is the
+site, at the root. The old preview URLs (`/template-1`, `/template-2`,
+`/template-3` and their sub-pages, plus `/layanan`) answer a permanent 308 to
+the matching new page.
 
 ---
+
+## Pages
+
+| | Indonesian | English |
+|---|---|---|
+| Home (hero, about, treatment summary, location, booking entry) | `/` | `/en` |
+| Treatment menu with prices | `/treatment` | `/en/treatments` |
+| Products | `/produk` | `/en/products` |
+| Partnership | `/kemitraan` | `/en/partnership` |
+| Contact | `/kontak` | `/en/contact` |
+| Booking form | `/reservasi` | `/en/book` |
+| Privacy, terms | `/privacy`, `/terms` | `/en/privacy`, `/en/terms` |
+| Link hub for the Instagram bio | `/booking` | (Indonesian only) |
+
+Header: Beranda, Treatment, Produk, Kemitraan, Kontak, the ID/EN switch, and a
+filled **Booking** button that opens WhatsApp with the booking greeting. The
+booking *form* is reached from the hero, the home booking section, the footer
+CTA and the link hub.
+
+## Two languages
+
+- Every page URL is listed once, in `src/config/i18n.ts` (`ROUTES`). Internal
+  links are written as route keys (`"products"`) and resolved there, so the two
+  languages cannot drift and the language switch lands on the same page in the
+  other language.
+- Every visible string is in `src/config/copy.ts`: Indonesian first, English
+  mirroring it key for key. The `Copy` type makes a missing English string a
+  type error.
+- Treatment names, product groups, dates, form errors, alt text, the cookie
+  panel, the legal pages and the WhatsApp messages are all translated. A visitor
+  on the English site sends an English WhatsApp message.
+- The two languages are two root layouts, `src/app/(id)` and `src/app/(en)`, so
+  each page ships the right `<html lang>` from the server. Crossing between them
+  is a full page load, which is why the switch uses plain anchors.
+- Each page carries `hreflang` alternates for both languages (Indonesian is
+  `x-default`), and the sitemap lists both.
+- With two root layouts there is no single layout to render a 404 inside, so
+  `src/app/global-not-found.tsx` (Next's `globalNotFound` experiment) brings its
+  own document and says it in both languages.
+- The booking form also accepts foreign numbers written with a `+` country code,
+  since English readers are often on foreign SIMs. Indonesian numbers are still
+  normalised to the 08 form; a number with no `+` that is not Indonesian is
+  still refused.
 
 ## The link hub at /booking
 
 `/booking` is the page for the Instagram bio: the wordmark, one line, and a
-stack of pills. Nothing else. No banner graphic, no address card, no site
-navigation, no footer beyond two legal links.
-
-**It fits one screen and does not scroll.** That is the constraint the page is
-built around, so anything that would push it past the fold gets cut rather than
-shrunk. Verified at 320x568, 360x640, 375x667, 390x844, 414x896, 768x1024 and
-1440x900, plus landscape at 667x375, 740x360 and 844x390: zero vertical
-overflow at every one.
-
-Two details make that hold:
-
-- Height is `100svh`, not `100vh`. On a phone `100vh` is the height with the
-  browser chrome *hidden*, so a `100vh` page is taller than what you can
-  actually see and scrolls by exactly the height of the address bar. `svh` is
-  the smallest viewport height, which is the one that guarantees a fit.
-- Held sideways, six stacked rows cannot fit 360px of height, so a `squat`
-  breakpoint (short and wide) splits them into two columns rather than
-  shrinking the rows below a comfortable tap target.
-
-The page is deliberately *not* `overflow: hidden`. At normal text size there is
-nothing to scroll to; if someone enlarges text well past default, scrolling is
-how they reach the last row, and trapping it would lock them out of it.
-
-Rows live in `src/config/links.ts`. Add, remove or reorder entries there and
-the page follows. Keep labels to one short line and the list short: six is
-comfortable, eight is the practical ceiling before the fold becomes a fight.
-The WhatsApp row goes through the same `WhatsAppLink` component as the rest of
-the site. Give a row a `message` when it promises something more specific than
-the default greeting, so the message matches the button that was pressed.
-
-Links into the site resolve through `sitePath()`, which points at the chosen
-template while the three previews coexist and at the flat paths once
-`PREVIEW_MODE` is off. Unlike the previews, this page is indexed and listed in
-the sitemap: it is a finished page with only one version of itself.
-
-Note the name collision to keep in mind: `/booking` is this link hub, while the
-actual booking form lives at `/template-N/booking`. If the site is ever
-flattened, rename one of the two.
-
----
-
-## The three directions
-
-**Template 1, Editorial Tenang.** A paper-white page built on an asymmetric
-twelve-column grid, held together by hairlines rather than boxes. The headline
-is set enormous and hairline-thin (Neue Montreal Light, up to 7rem) and sits
-hard left while the description and the call to action are pushed to the far
-right of the same row, so the eye crosses a lot of empty paper to read one
-sentence. Nothing has a rounded corner anywhere: the radius is 0 throughout,
-service groups are separated by ruled lines instead of cards, and the primary
-button is an underlined link rather than a filled shape. Section spacing is the
-most generous of the three. Motion is slow and almost subliminal, a 720ms blur
-that clears as elements rise a few pixels. It is the direction to pick if the
-salon wants to read as quiet, considered and a little bit gallery.
-
-**Template 2, Hangat dan Ramah.** Everything soft. The ground is a warm sand,
-cards are 24px rounded and the controls are full pills, including the
-navigation, which sits in a rounded capsule with a filled WhatsApp button
-beside it. The composition is centred and noticeably denser than template 1:
-sections are about half as tall, the type is smaller and set in Medium rather
-than Light, and the four service groups are the loudest thing on the home page,
-each one a card with its own generated graphic, a numbered chip and its
-services as tappable pills. Motion is the liveliest of the three, short 420ms
-springs with a small lift on hover. It is the direction to pick if the salon
-wants to feel approachable and easy, closer to a neighbourhood place than a
-studio.
-
-**Template 3, Gelap dan Mewah.** A near-black olive-tinted page where almost
-nothing is filled in. Structure comes from single-pixel hairlines: the hero
-sits inside a thin frame, section labels are boxed in a hairline, and the
-service rows are separated by 1px gaps rather than borders. The type is the
-smallest of the three but the most widely tracked, and section labels run at
-0.42em letter-spacing, which is what does the work instead of size. Line
-height is deliberately looser than the other two because light type on a dark
-ground reads thinner. Corners are 2px, just enough to register as intentional.
-Motion is the most restrained: opacity and hairlines that draw themselves,
-nothing that moves position, over the longest durations of the three. It is the
-direction to pick if the salon wants to feel expensive and still.
-
-Stack the three, make the colours identical, and they still do not look alike:
-the layouts are asymmetric versus centred versus split-and-framed, the display
-type runs roughly 112px versus 72px versus 56px at desktop, the corner radii
-are 0 versus 24 versus 2, and the motion is slow-blur versus spring versus
-opacity-only.
+stack of pills. Nothing else. It fits one screen and does not scroll: height is
+`100svh` (not `100vh`, which on a phone is taller than what you can see), and a
+`squat` breakpoint splits the rows into two columns when held sideways. Rows
+live in `src/config/links.ts`. It is Indonesian only.
 
 ---
 
 ## What you need to fill in
 
 **Opening hours are not set.** They are the one thing here that would actively
-cost the salon a customer if guessed, so nothing guesses them. Right now every
-template prints "Jam buka belum kami umumkan" with a note to ask on WhatsApp,
-and the LocalBusiness structured data omits `openingHoursSpecification`
-entirely rather than publishing a wrong "Open now" to Google.
-
-To fill them in, edit `OPENING_HOURS` in `src/config/site.ts`:
+cost the salon a customer if guessed, so nothing guesses them. The site prints
+"Jam buka belum kami umumkan" with a note to ask on WhatsApp, and the
+LocalBusiness structured data omits `openingHoursSpecification`. To fill them
+in, edit `OPENING_HOURS` in `src/config/site.ts`:
 
 ```ts
 export const OPENING_HOURS: OpeningHours = {
   status: "published",          // was "unset"
-  unknownLabel: "...",          // leave as is, no longer shown
-  unknownHint: "...",
   days: [
-    { day: "Mo", label: "Senin", opens: "09:00", closes: "19:00" },
+    { day: "Mo", opens: "09:00", closes: "19:00" },
     // ...
   ],
 };
 ```
 
-Nothing else needs changing. The footer, the location block and the structured
-data all switch over on their own.
+Day names come from the copy file in each language; nothing else changes.
 
-**The service list is sample content.** Everything in
-`src/config/services.ts` is a placeholder and the site says so, in normal
-reading size, at the top of the list on both the home page and the services
-page. Replace the `items` arrays and set `SERVICES_ARE_SAMPLE = false`; the
-notice removes itself. There are deliberately no prices and no durations
-anywhere, because none were supplied.
+**The treatment menu is real.** `src/config/services.ts` is transcribed from
+the salon's two price-list sheets: six groups, single prices, and Short /
+Medium / Long / Extra Long prices for hair treatment and hair colouring
+(colouring marked "start from"). Two spellings were normalised: "Keratine" to
+Keratin, "Loreal" to L'Oréal. Add-ons are listed but not bookable on their own;
+the form tells visitors to put them in the notes.
 
----
+**Products are sample content.** No product list was supplied, so
+`src/config/products.ts` lists ordinary kinds of take-home hair care with no
+brands or prices, and the page says it is a sample. Replace the groups and set
+`PRODUCTS_ARE_SAMPLE = false`.
 
-## Turning a preview into the real site
+**About text and photos are a first draft.** The "Tentang Andari Salon" section
+on the home page is written only from known facts (where the salon is, what it
+does, how booking works). The client's own text and photos replace it and the
+generated graphics when they arrive.
 
-Once a direction is chosen, open `src/config/preview.ts`:
-
-```ts
-export const PREVIEW_MODE = false;
-export const LIVE_TEMPLATE = "template-2";   // whichever was picked
-```
-
-That one flag:
-
-- removes the floating template switcher from every page
-- redirects `/` to the chosen template instead of showing the chooser
-- puts the chosen template's four pages into the sitemap and stops
-  disallowing them in robots.txt, and drops the `noindex`
-- stops tagging WhatsApp messages with which template they came from
-
-The other two templates keep working at their URLs; delete their route folders
-under `src/app/` if you want them gone.
+**Partnership has no programme yet.** The page invites a proposal on WhatsApp
+and lists what to include; it does not describe terms that do not exist.
 
 ---
 
 ## Content rules held throughout
 
-The salon opened days ago, so the site has no track record to show and does not
-pretend otherwise. Nowhere in the copy is there a price, a rating, a customer
-count, a year founded, a testimonial, a stylist name, a "best" or "certified",
-or a promise about how anything will turn out. What replaces social proof is
-plainness: what is offered, where it is, when it opens (once known), and how to
-book.
-
-All three templates read their words from the same `src/config/copy.ts`. That
-is on purpose, and worth keeping: if the copy differed, comparing the three
-would turn into comparing the writing instead of the design.
+No rating, customer count, year founded, testimonial, stylist name, "best" or
+"certified", or promise about how anything will turn out. Prices appear only as
+the salon's own price list states them.
 
 Every fact about the business lives in `src/config/site.ts` and nowhere else.
 `npm run audit` fails the build if a component hard-codes the WhatsApp number,
@@ -190,6 +131,10 @@ Contact details, exactly as supplied and not extended:
 | Address | Jl. Gunung Rinjani No.4, Tegal Kertha, Kec. Denpasar Barat, Kota Denpasar, Bali 80112 |
 
 There is no email address on the site, because none was given.
+
+Some shared components (page transitions, date picker, listbox) still carry
+branches for the two designs that were not chosen. They are unreachable and
+safe to prune.
 
 ---
 
@@ -290,22 +235,26 @@ npm run verify     # smoke-test production over HTTP
 
 1. any raw `z-index` or Tailwind `z-*` utility. There is one z scale, declared
    once in `globals.css`, and the audit also checks it is in the required order.
-2. any colour pair the three templates put on screen falling under WCAG AA
+2. any colour pair the design tokens put on screen falling under WCAG AA
    4.5:1. Currently 42 pairs are checked; the lowest is 4.71:1.
 3. any component hard-coding the WhatsApp number, Instagram handle or address.
 4. anything anywhere that looks like an invented opening-hours range.
 
-`npm run verify` (`scripts/verify-production.mjs`) checks all 17 routes and 33
-assets answer 200 with no auth wall, that the booking endpoint rejects past
-dates, unknown services, off-grid times and bad phone numbers when the browser
-is bypassed entirely, that eight real-world phone formats are accepted and
-normalised, that the honeypot is neutralised, and that robots, sitemap and
-structured data all agree with preview mode.
+`npm run verify` (`scripts/verify-production.mjs`) checks all 19 routes and the
+assets answer 200 with no auth wall, that the old preview URLs 308 to their new
+pages, that the booking endpoint rejects past dates, unknown services, add-ons
+on their own, off-grid times and bad phone numbers when the browser is bypassed
+entirely, that eight real-world phone formats are accepted and normalised, that
+the English form produces an English message and English errors, that the
+honeypot is neutralised, that both languages declare their `lang` and point at
+each other, that the treatment page carries the price list, and that robots,
+sitemap and structured data agree.
 
 `scripts/audit-overflow.js` is a browser snippet that finds the specific
 element causing horizontal overflow, rather than just reporting that the page
-is too wide. It was run across 15 routes at 375, 768 and 1440, all three
-templates included: 45 combinations, zero offenders.
+is too wide. After the language split, 16 routes were checked at 360, 768, 1024
+and 1440 (64 combinations): zero overflow, and the header never wraps or
+overlaps at 1024 in either language.
 
 ---
 
@@ -339,8 +288,7 @@ a provenance block naming the page URL, the button pressed and which preview
 was open. That was useful while three designs were being compared, but it reads
 like machine output to whoever receives it, so it is gone: no URL, no button
 label, no template tag. `npm run verify` asserts their absence rather than
-trusting it. If the tracing is ever wanted back, it belongs behind
-`PREVIEW_MODE`, not in every message a real customer sends.
+trusting it.
 
 **Booking is validated twice.** The browser validates for fast feedback, then
 `/api/booking` runs the identical schema again and composes the WhatsApp

@@ -5,18 +5,38 @@
  * does, and the server must reject a past date using the salon's clock rather
  * than the server's. Everything here works on plain "YYYY-MM-DD" strings so
  * client and server can agree without shipping a date library.
+ *
+ * Names are written out per language rather than taken from Intl, so the
+ * server and the browser can never render a date differently and trip a
+ * hydration mismatch.
  */
 
+import type { Locale } from "@/config/i18n";
 import { SITE } from "@/config/site";
 
-export const DAY_NAMES_SHORT = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-export const DAY_NAMES_LONG = [
-  "Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu",
-];
-export const MONTH_NAMES = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
-];
+const NAMES: Record<Locale, { days: string[]; weekHeader: string[]; months: string[] }> = {
+  id: {
+    days: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"],
+    // Monday first, matching the grid.
+    weekHeader: ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"],
+    months: [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+    ],
+  },
+  en: {
+    days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    weekHeader: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    months: [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December",
+    ],
+  },
+};
+
+export function weekHeader(locale: Locale): string[] {
+  return NAMES[locale].weekHeader;
+}
 
 /** ISO date ("YYYY-MM-DD") for "now" in the salon's timezone. */
 export function todayISO(now: Date = new Date()): string {
@@ -66,18 +86,12 @@ export function addDaysISO(iso: string, days: number): string {
   ).padStart(2, "0")}`;
 }
 
-/** "Senin, 25 Agustus 2026" */
-export function formatLongID(iso: string): string {
+/** "Senin, 25 Agustus 2026" / "Monday, 25 August 2026" */
+export function formatLong(iso: string, locale: Locale): string {
   if (!isValidISODate(iso)) return "";
   const [y, m, d] = iso.split("-").map(Number);
-  return `${DAY_NAMES_LONG[weekdayOf(iso)]}, ${d} ${MONTH_NAMES[m - 1]} ${y}`;
-}
-
-/** "25 Agu 2026", for tight layouts. */
-export function formatShortID(iso: string): string {
-  if (!isValidISODate(iso)) return "";
-  const [y, m, d] = iso.split("-").map(Number);
-  return `${d} ${MONTH_NAMES[m - 1].slice(0, 3)} ${y}`;
+  const n = NAMES[locale];
+  return `${n.days[weekdayOf(iso)]}, ${d} ${n.months[m - 1]} ${y}`;
 }
 
 export type CalendarCell = {
@@ -90,7 +104,8 @@ export type CalendarCell = {
 };
 
 /**
- * Six-row grid for a month, Monday first (Indonesian convention).
+ * Six-row grid for a month, Monday first (Indonesian convention, kept for
+ * English too so the calendar does not change shape between languages).
  * Always 42 cells so the popover never changes height between months.
  */
 export function buildMonthGrid(
@@ -118,6 +133,6 @@ export function buildMonthGrid(
   return cells;
 }
 
-export function monthLabel(year: number, monthIndex: number): string {
-  return `${MONTH_NAMES[((monthIndex % 12) + 12) % 12]} ${year}`;
+export function monthLabel(year: number, monthIndex: number, locale: Locale): string {
+  return `${NAMES[locale].months[((monthIndex % 12) + 12) % 12]} ${year}`;
 }

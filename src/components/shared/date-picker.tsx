@@ -23,15 +23,16 @@ import { createPortal } from "react-dom";
 import { BOOKING_WINDOW_DAYS } from "@/config/services";
 import { useClientValue } from "@/lib/use-client-value";
 import {
-  DAY_NAMES_SHORT,
   addDaysISO,
   buildMonthGrid,
-  formatLongID,
+  formatLong,
   monthLabel,
   todayISO,
+  weekHeader,
 } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
+import { useCopy, useLocale } from "./locale-context";
 import { useTemplate } from "./template-context";
 import { useScrollLock, useUIState } from "./ui-state";
 
@@ -58,6 +59,8 @@ export function DatePicker({
 }: Props) {
   const popoverId = `${POPOVER_ID_PREFIX}${id}`;
   const template = useTemplate();
+  const locale = useLocale();
+  const T = useCopy().datePicker;
   const { requestPopover, closePopover, openPopover, menuOpen } = useUIState();
 
   const [wantOpen, setWantOpen] = useState(false);
@@ -234,7 +237,7 @@ export function DatePicker({
                 data-template={template?.key}
                 role="dialog"
                 aria-modal="false"
-                aria-label="Pilih tanggal"
+                aria-label={T.dialog}
                 initial={{ opacity: 0, y: rect.drop === "down" ? -8 : 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: rect.drop === "down" ? -6 : 6 }}
@@ -253,16 +256,16 @@ export function DatePicker({
               >
                 <div className="mb-3 flex items-center justify-between gap-2">
                   <NavBtn
-                    label="Bulan sebelumnya"
+                    label={T.prev}
                     disabled={!canPrev}
                     onClick={() => shiftMonth(-1)}
                     dir="prev"
                   />
                   <div aria-live="polite" className="text-[length:var(--t-small)] font-medium">
-                    {monthLabel(year, monthIndex)}
+                    {monthLabel(year, monthIndex, locale)}
                   </div>
                   <NavBtn
-                    label="Bulan berikutnya"
+                    label={T.next}
                     disabled={!canNext}
                     onClick={() => shiftMonth(1)}
                     dir="next"
@@ -270,7 +273,7 @@ export function DatePicker({
                 </div>
 
                 <div className="mb-1 grid grid-cols-7 gap-0.5">
-                  {["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"].map((d) => (
+                  {weekHeader(locale).map((d) => (
                     <div
                       key={d}
                       aria-hidden
@@ -285,7 +288,7 @@ export function DatePicker({
                 <div
                   ref={gridRef}
                   role="grid"
-                  aria-label={monthLabel(year, monthIndex)}
+                  aria-label={monthLabel(year, monthIndex, locale)}
                   onKeyDown={onGridKeyDown}
                   className="grid grid-cols-7 gap-0.5"
                 >
@@ -301,7 +304,7 @@ export function DatePicker({
                         data-iso={cell.iso}
                         aria-selected={isSelected}
                         aria-current={cell.isToday ? "date" : undefined}
-                        aria-label={formatLongID(cell.iso)}
+                        aria-label={formatLong(cell.iso, locale)}
                         disabled={cell.disabled}
                         tabIndex={isCursor ? 0 : -1}
                         onClick={() => {
@@ -342,7 +345,7 @@ export function DatePicker({
                   className="mt-3 text-[0.75rem] leading-relaxed"
                   style={{ color: "var(--t-fg-faint)" }}
                 >
-                  Tanggal sebelum {formatLongID(min)} tidak tersedia.
+                  {T.unavailableBefore(formatLong(min, locale))}
                 </p>
               </motion.div>
             ) : null}
@@ -381,7 +384,7 @@ export function DatePicker({
             className="truncate"
             style={{ color: value ? "var(--t-fg)" : "var(--t-fg-faint)" }}
           >
-            {value ? formatLongID(value) : placeholder}
+            {value ? formatLong(value, locale) : placeholder}
           </span>
         </span>
       </button>
@@ -442,4 +445,4 @@ function CalendarIcon() {
   );
 }
 
-export { DAY_NAMES_SHORT };
+

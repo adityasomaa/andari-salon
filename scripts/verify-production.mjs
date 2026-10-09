@@ -13,18 +13,21 @@
  * calendar popover, and anything about motion.
  */
 
-const ORIGIN = process.argv[2] ?? "https://andari-salon.vercel.app";
+const ORIGIN = process.argv[2] ?? "https://andarisalon.id";
 
-const TEMPLATES = ["/template-1", "/template-2", "/template-3"];
-const SUBPAGES = ["", "/layanan", "/booking", "/kontak"];
+const PAGES_ID = ["/", "/treatment", "/produk", "/kemitraan", "/kontak", "/reservasi", "/privacy", "/terms"];
+const PAGES_EN = ["/en", "/en/treatments", "/en/products", "/en/partnership", "/en/contact", "/en/book", "/en/privacy", "/en/terms"];
 
-const ROUTES = [
-  "/",
-  "/privacy",
-  "/terms",
-  "/robots.txt",
-  "/sitemap.xml",
-  ...TEMPLATES.flatMap((t) => SUBPAGES.map((s) => `${t}${s}`)),
+const ROUTES = [...PAGES_ID, ...PAGES_EN, "/booking", "/robots.txt", "/sitemap.xml"];
+
+/** Old preview and slug URLs, and where they must land. */
+const REDIRECTS = [
+  ["/template-1", "/"],
+  ["/template-2", "/"],
+  ["/template-3/kontak", "/kontak"],
+  ["/template-2/layanan", "/treatment"],
+  ["/template-1/booking", "/reservasi"],
+  ["/layanan", "/treatment"],
 ];
 
 const ASSETS = [
@@ -40,7 +43,7 @@ const ASSETS = [
   "/fonts/NeueMontreal-Regular.woff2",
   "/fonts/NeueMontreal-Medium.woff2",
   "/fonts/NeueMontreal-Bold.woff2",
-  ...["t1", "t2", "t3"].flatMap((t) => [
+  ...["t2"].flatMap((t) => [
     `/art/${t}-hero.svg`,
     `/art/${t}-band.svg`,
     ...[0, 1, 2].map((i) => `/art/${t}-column-${i}.svg`),
@@ -114,10 +117,10 @@ async function checkBooking() {
   } else {
     const m = good.json.message;
     const required = [
+      "Halo Andari Salon, saya ingin booking.",
       "Ayu Pratiwi",
       "081234567890",
-      "Smoothing",
-      "Perawatan Rambut",
+      "Treatment: Smoothing (Hair Treatment)",
       "11:30",
       "Alergi produk beraroma kuat.",
     ];
@@ -150,6 +153,25 @@ async function checkBooking() {
     ok("WhatsApp message carries no URL, button label or template tag");
   }
 
+  // 1b. the English form produces an English message
+  {
+    const r = await post({ ...VALID, locale: "en", phone: "+61 412 345 678", serviceId: "hair-cut-cuci" });
+    if (r.status !== 200 || !r.json.ok) {
+      bad(`English booking with a foreign number rejected: ${r.status} ${JSON.stringify(r.json.errors)}`);
+    } else {
+      for (const needle of ["Hello Andari Salon, I would like to book.", "Name: Ayu Pratiwi", "WhatsApp: +61412345678", "Treatment: Hair Cut + Wash (Hair Cut)", "Time: 11:30"]) {
+        if (!r.json.message.includes(needle)) bad(`English WhatsApp message is missing "${needle}"`);
+      }
+      ok("English form composes an English message and accepts a +country-code number");
+    }
+    const e = await post({ ...VALID, locale: "en", name: "" });
+    if (!/name/i.test(e.json.errors?.name ?? "") || /Nama/.test(e.json.errors?.name ?? "")) {
+      bad(`English validation error is not in English: ${JSON.stringify(e.json.errors)}`);
+    } else ok("validation errors follow the visitor's language");
+    const x = await post({ ...VALID, locale: "fr" });
+    if (x.status !== 422) bad(`unknown locale accepted (status ${x.status})`);
+  }
+
   // 2. provenance fields are no longer part of the contract at all
   {
     const r = await post({ ...VALID, pageUrl: `${ORIGIN}/x`, templateId: "template-2" });
@@ -165,11 +187,13 @@ async function checkBooking() {
     ["far future date", { date: isoDaysFromNow(400) }, "date"],
     ["malformed date", { date: "2026-13-45" }, "date"],
     ["unknown service", { serviceId: "cukur-kumis" }, "serviceId"],
+    ["add-on booked on its own", { serviceId: "hair-vitamin" }, "serviceId"],
     ["off-grid time", { time: "03:17" }, "time"],
     ["empty name", { name: "" }, "name"],
     ["digits-only name", { name: "12345" }, "name"],
     ["nonsense phone", { phone: "12345" }, "phone"],
-    ["non-Indonesian phone", { phone: "+1 415 555 0100" }, "phone"],
+    ["foreign number without +", { phone: "1 415 555 0100" }, "phone"],
+    ["too-short foreign number", { phone: "+1 415" }, "phone"],
   ];
   for (const [label, patch, field] of rejects) {
     const r = await post({ ...VALID, ...patch });
@@ -210,19 +234,53 @@ async function checkBooking() {
   if (g.status !== 405) bad(`GET /api/booking answered ${g.status}, expected 405`);
 }
 
-async function checkSeo() {
-  const robots = await (await fetch(`${ORIGIN}/robots.txt`)).text();
-  for (const t of TEMPLATES) {
-    if (!robots.includes(`Disallow: ${t}`)) bad(`robots.txt does not disallow ${t} while previewing`);
+async function checkRedirects() {
+  for (const [from, to] of REDIRECTS) {
+    const res = await fetch(`${ORIGIN}${from}`, { redirect: "manual" });
+    const loc = res.headers.get("location") ?? "";
+    if (res.status !== 308 || new URL(loc, ORIGIN).pathname !== to) {
+      bad(`${from} should 308 to ${to}, got ${res.status} -> ${loc}`);
+    }
   }
-  if (!robots.includes(`${ORIGIN}/sitemap.xml`)) bad("robots.txt does not point at the sitemap");
+  ok(`${REDIRECTS.length} old preview URLs redirect permanently to their new pages`);
+
+  const missing = await fetch(`${ORIGIN}/halaman-yang-tidak-ada`);
+  if (missing.status !== 404) bad(`unknown URL answered ${missing.status}, expected 404`);
+  else ok("unknown URLs answer 404");
+}
+
+async function checkSeo() {
+  const SITE = "https://andarisalon.id";
+  const robots = await (await fetch(`${ORIGIN}/robots.txt`)).text();
+  if (/Disallow: \/template/.test(robots)) bad("robots.txt still mentions the preview routes");
+  if (!robots.includes(`${SITE}/sitemap.xml`)) bad("robots.txt does not point at the sitemap");
 
   const sitemap = await (await fetch(`${ORIGIN}/sitemap.xml`)).text();
-  for (const t of TEMPLATES) {
-    if (sitemap.includes(`${ORIGIN}${t}`)) bad(`sitemap lists ${t} while previewing`);
+  for (const path of [...PAGES_ID, ...PAGES_EN, "/booking"]) {
+    const url = path === "/" ? SITE : `${SITE}${path}`;
+    if (!sitemap.includes(`<loc>${url}</loc>`)) bad(`sitemap is missing ${url}`);
+  }
+  if (sitemap.includes("/template-")) bad("sitemap still lists a preview route");
+  if (!sitemap.toLowerCase().includes(`hreflang="en"`)) bad("sitemap carries no hreflang alternates");
+
+  const en = await (await fetch(`${ORIGIN}/en/products`)).text();
+  if (!/<html[^>]*lang="en"/.test(en)) bad("/en pages do not declare lang=en");
+  if (!en.toLowerCase().includes(`hreflang="id" href="${SITE}/produk"`)) bad("/en/products does not point at its Indonesian page");
+  if (!en.includes("Hair care products.")) bad("/en/products is not in English");
+  ok("English pages declare lang=en and link their Indonesian counterparts");
+
+  const home = await (await fetch(`${ORIGIN}/`)).text();
+  if (!/<html[^>]*lang="id"/.test(home)) bad("Indonesian pages do not declare lang=id");
+  if (!home.toLowerCase().includes(`hreflang="en" href="${SITE}/en"`)) bad("home does not point at its English page");
+  for (const needle of ["Treatment", "Produk", "Kemitraan", "Tentang Andari Salon", ">Booking<"]) {
+    if (!home.includes(needle)) bad(`home is missing "${needle}"`);
   }
 
-  const home = await (await fetch(`${ORIGIN}/template-1`)).text();
+  const menu = await (await fetch(`${ORIGIN}/treatment`)).text();
+  for (const needle of ["Rp 350.000", "Rp 1.200.000", "Hair Cut Poni", "Keramas by Matrix Food For Soft", "Balayage"]) {
+    if (!menu.includes(needle)) bad(`treatment page is missing "${needle}"`);
+  }
+  ok("treatment page carries the price list");
   if (!home.includes('"@type":"HairSalon"')) bad("LocalBusiness structured data is missing");
   if (home.includes("openingHoursSpecification")) {
     bad("structured data publishes opening hours, which are not known yet");
@@ -230,8 +288,8 @@ async function checkSeo() {
   if (!home.includes("Jl. Gunung Rinjani No.4")) bad("structured data is missing the street address");
   if (!home.includes("+6285218958623")) bad("structured data is missing the WhatsApp number");
   if (!home.includes("instagram.com/andarisalon.id")) bad("structured data is missing Instagram");
-  if (!home.includes('name="robots" content="noindex')) bad("template routes are not noindex while previewing");
-  ok("robots, sitemap and structured data are consistent with preview mode");
+  if (home.includes('name="robots" content="noindex')) bad("the home page is noindex");
+  ok("robots, sitemap and structured data are consistent");
 
   // Opening hours must not be invented anywhere in the rendered HTML either.
   if (/\b(0?\d|1\d|2[0-3])[.:]\d{2}\s*(?:-|–)\s*(0?\d|1\d|2[0-3])[.:]\d{2}\b/.test(home)) {
@@ -246,6 +304,7 @@ async function main() {
   await checkRoutes();
   await checkAssets();
   await checkBooking();
+  await checkRedirects();
   await checkSeo();
 
   for (const n of notes) console.log(n);

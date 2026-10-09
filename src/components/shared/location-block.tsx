@@ -10,32 +10,29 @@
 
 import { useEffect, useState } from "react";
 
-import { COPY } from "@/config/copy";
 import { ADDRESS, CONTACT, SOCIALS } from "@/config/site";
-import type { TemplateId } from "@/config/site";
 import { cn } from "@/lib/utils";
 
-import { HoursText } from "./site-footer";
+import { useCopy } from "./locale-context";
 import { Reveal } from "./reveal";
-import { templateInfo } from "./template-context";
+import { HoursText } from "./site-footer";
 import { WhatsAppLink } from "./whatsapp-link";
 
 export function LocationBlock({
-  template,
   showContacts = false,
   className,
 }: {
-  template: TemplateId;
   /** Contact page also lists WhatsApp and Instagram here. */
   showContacts?: boolean;
   className?: string;
 }) {
-  const key = templateInfo(template).key;
+  const copy = useCopy();
+  const L = copy.location_block;
 
   const details = (
     <div className="grid gap-7">
       <div className="grid gap-2">
-        <p className="t-label">{COPY.location_block.addressTitle}</p>
+        <p className="t-label">{L.addressTitle}</p>
         <address className="t-body text-[length:var(--t-body)] not-italic">{ADDRESS.full}</address>
         <div className="mt-1 flex flex-wrap items-center gap-x-5 gap-y-2">
           <CopyAddress />
@@ -45,19 +42,19 @@ export function LocationBlock({
             rel="noopener noreferrer"
             className="text-[length:var(--t-small)] underline underline-offset-4"
           >
-            {COPY.location_block.openMaps}
+            {L.openMaps}
           </a>
         </div>
       </div>
 
       <div className="grid gap-2">
-        <p className="t-label">{COPY.location_block.hoursTitle}</p>
+        <p className="t-label">{L.hoursTitle}</p>
         <HoursText />
       </div>
 
       {showContacts ? (
         <div className="grid gap-2">
-          <p className="t-label">{COPY.footer.contactTitle}</p>
+          <p className="t-label">{copy.footer.contactTitle}</p>
           <ul className="grid gap-1.5 text-[length:var(--t-body)]">
             <li>
               <WhatsAppLink className="underline underline-offset-4">
@@ -82,64 +79,29 @@ export function LocationBlock({
     </div>
   );
 
-  const map = (
-    <div
-      className={cn(
-        "relative w-full overflow-hidden",
-        key === "t1" ? "aspect-[4/3]" : key === "t2" ? "aspect-[4/3]" : "aspect-[3/2]",
-      )}
-      style={{
-        borderRadius: "var(--t-radius)",
-        border: key === "t1" ? "1px solid var(--t-line)" : "1px solid var(--t-line-strong)",
-        // t3 keeps the map from glaring against a near-black page.
-        filter: key === "t3" ? "grayscale(1) invert(0.92) hue-rotate(180deg) contrast(0.86)" : undefined,
-      }}
-    >
-      <iframe
-        src={ADDRESS.mapsEmbedUrl}
-        title={COPY.location_block.mapTitle}
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-        className="absolute inset-0 size-full border-0"
-      />
-    </div>
-  );
-
-  if (key === "t2") {
-    return (
-      <div className={cn("t-card grid gap-8 overflow-hidden p-5 sm:p-8 lg:grid-cols-2 lg:items-center", className)}>
-        <Reveal kind="spring-rise">{details}</Reveal>
-        <Reveal kind="spring-rise" delay={0.1}>
-          {map}
-        </Reveal>
-      </div>
-    );
-  }
-
-  if (key === "t3") {
-    return (
-      <div className={cn("grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-14", className)}>
-        <Reveal kind="fade">{details}</Reveal>
-        <Reveal kind="fade" delay={0.12}>
-          {map}
-        </Reveal>
-      </div>
-    );
-  }
-
   return (
-    <div className={cn("grid gap-10 lg:grid-cols-12 lg:gap-8", className)}>
-      <Reveal kind="blur-rise" className="lg:col-span-4">
-        {details}
-      </Reveal>
-      <Reveal kind="blur-rise" delay={0.1} className="lg:col-span-7 lg:col-start-6">
-        {map}
+    <div className={cn("t-card grid gap-8 overflow-hidden p-5 sm:p-8 lg:grid-cols-2 lg:items-center", className)}>
+      <Reveal kind="spring-rise">{details}</Reveal>
+      <Reveal kind="spring-rise" delay={0.1}>
+        <div
+          className="relative aspect-[4/3] w-full overflow-hidden"
+          style={{ borderRadius: "var(--t-radius)", border: "1px solid var(--t-line-strong)" }}
+        >
+          <iframe
+            src={ADDRESS.mapsEmbedUrl}
+            title={L.mapTitle}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="absolute inset-0 size-full border-0"
+          />
+        </div>
       </Reveal>
     </div>
   );
 }
 
 function CopyAddress() {
+  const L = useCopy().location_block;
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -169,9 +131,7 @@ function CopyAddress() {
       }}
       className="inline-flex items-center gap-2 text-[length:var(--t-small)] underline underline-offset-4"
     >
-      <span aria-live="polite">
-        {copied ? COPY.location_block.copiedAddress : COPY.location_block.copyAddress}
-      </span>
+      <span aria-live="polite">{copied ? L.copiedAddress : L.copyAddress}</span>
     </button>
   );
 }

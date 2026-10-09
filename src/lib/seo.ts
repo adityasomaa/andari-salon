@@ -1,37 +1,73 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
-import { COPY } from "@/config/copy";
-import { ADDRESS, CONTACT, OPENING_HOURS, SITE, TEMPLATES } from "@/config/site";
-import { PREVIEW_MODE } from "@/config/preview";
+import { getCopy } from "@/config/copy";
+import { LOCALES, LOCALE_META, ROUTES, type Locale, type RouteKey } from "@/config/i18n";
+import { ALL_SERVICES, formatRupiah } from "@/config/services";
+import { ADDRESS, CONTACT, OPENING_HOURS, SITE } from "@/config/site";
 
-type PageKey = keyof typeof COPY.pages;
+type PageKey = keyof ReturnType<typeof getCopy>["pages"] & RouteKey;
 
-/**
- * Page metadata. All three templates describe the same business, so the same
- * titles and descriptions are used; only the canonical differs.
- *
- * While the site is in preview the template routes are marked noindex. They
- * are three versions of one business, and letting search engines index all of
- * them would be duplicate content for a salon that has not launched.
- */
-export function pageMetadata(page: PageKey, path: string, isTemplateRoute = true): Metadata {
-  const p = COPY.pages[page];
-  const url = `${SITE.url}${path}`;
+export function absoluteUrl(path: string): string {
+  return path === "/" ? SITE.url : `${SITE.url}${path}`;
+}
+
+/** hreflang map for a route: both languages, Indonesian as the default. */
+export function languageAlternates(key: RouteKey): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const l of LOCALES) out[l] = absoluteUrl(ROUTES[key][l]);
+  out["x-default"] = absoluteUrl(ROUTES[key].id);
+  return out;
+}
+
+/** Shared by both root layouts. */
+export function rootMetadata(locale: Locale): Metadata {
+  const copy = getCopy(locale);
+  return {
+    metadataBase: new URL(SITE.url),
+    title: {
+      default: copy.pages.home.metaTitle,
+      template: `%s · ${SITE.name}`,
+    },
+    description: copy.brand.description,
+    applicationName: SITE.name,
+    // The site icon is the traced monogram, transparent, no background plate.
+    icons: {
+      icon: [
+        { url: "/icon.svg", type: "image/svg+xml" },
+        { url: "/favicon.ico", sizes: "any" },
+      ],
+      apple: [{ url: "/apple-icon.png", sizes: "180x180" }],
+    },
+    manifest: "/site.webmanifest",
+    formatDetection: { telephone: false },
+  };
+}
+
+export const VIEWPORT: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Pinch zoom stays available. Never disable it.
+  maximumScale: 5,
+  themeColor: "#fbfaf7",
+};
+
+/** Page metadata: title, canonical, the other language, social cards. */
+export function pageMetadata(page: PageKey, locale: Locale): Metadata {
+  const p = getCopy(locale).pages[page];
+  const url = absoluteUrl(ROUTES[page][locale]);
   // The home title already contains the brand name, so it opts out of the
-  // root layout's "%s | Andari Salon" template rather than saying it twice.
+  // root layout's "%s · Andari Salon" template rather than saying it twice.
   const title = page === "home" ? { absolute: p.metaTitle } : p.metaTitle;
   return {
     title,
     description: p.metaDescription,
-    alternates: { canonical: url },
-    robots:
-      PREVIEW_MODE && isTemplateRoute
-        ? { index: false, follow: true }
-        : { index: true, follow: true },
+    alternates: { canonical: url, languages: languageAlternates(page) },
+    robots: { index: true, follow: true },
     openGraph: {
       type: "website",
       siteName: SITE.name,
-      locale: "id_ID",
+      locale: LOCALE_META[locale].og,
+      alternateLocale: LOCALES.filter((l) => l !== locale).map((l) => LOCALE_META[l].og),
       url,
       title: p.metaTitle,
       description: p.metaDescription,
@@ -53,15 +89,18 @@ export function pageMetadata(page: PageKey, path: string, isTemplateRoute = true
  * Publishing a guess here is worse than publishing nothing: search results
  * would show "Open now" for a salon that is shut.
  */
-export function localBusinessJsonLd() {
+export function localBusinessJsonLd(locale: Locale) {
   const data: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "HairSalon",
     "@id": `${SITE.url}#business`,
     name: SITE.name,
-    description: SITE.description,
-    url: SITE.url,
+    description: getCopy(locale).brand.description,
+    url: absoluteUrl(ROUTES.home[locale]),
     telephone: `+${CONTACT.whatsappE164}`,
+    // From the price list itself, so it can never drift from the menu.
+    priceRange: menuPriceRange(),
+    currenciesAccepted: "IDR",
     address: {
       "@type": "PostalAddress",
       streetAddress: ADDRESS.line1,
@@ -88,9 +127,9 @@ export function localBusinessJsonLd() {
   return data;
 }
 
-export const TEMPLATE_PATHS = TEMPLATES.flatMap((t) => [
-  t.href,
-  `${t.href}/layanan`,
-  `${t.href}/booking`,
-  `${t.href}/kontak`,
-]);
+function menuPriceRange(): string {
+  const all = ALL_SERVICES.filter((s) => s.bookable).flatMap((s) =>
+    typeof s.price === "number" ? [s.price] : Object.values(s.price),
+  );
+  return `${formatRupiah(Math.min(...all))} – ${formatRupiah(Math.max(...all))}`;
+}

@@ -3,27 +3,26 @@
 /**
  * The only way this site links to WhatsApp.
  *
- * Every button that opens WhatsApp goes through here, so the greeting is
- * written in one place and the number can never drift from the one in
- * src/config/site.ts.
+ * Every button that opens WhatsApp goes through here, so the greetings are
+ * written in one place (COPY.wa, in both languages) and the number can never
+ * drift from the one in src/config/site.ts.
  *
- * The message is just the message. It used to carry the page URL, the button
- * label and which preview was open; that made sense while three designs were
- * being compared side by side, but it reads like machine output to whoever
- * receives it, so it is gone.
+ * The message is just the message: no page URL, no button label.
  */
 
 import type { ReactNode } from "react";
 
-import { buildGeneralMessage, waHref } from "@/lib/whatsapp";
+import type { WaIntent } from "@/config/copy";
+import { waHref } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
+
+import { useCopy } from "./locale-context";
 
 type Props = {
   children: ReactNode;
-  /**
-   * Ready-made message. The booking form passes one composed server side;
-   * everything else gets the generic greeting.
-   */
+  /** Which pre-written greeting to open with. Defaults to a general question. */
+  intent?: WaIntent;
+  /** Ready-made message, e.g. one composed server side. Wins over `intent`. */
   message?: string;
   className?: string;
   style?: React.CSSProperties;
@@ -32,8 +31,9 @@ type Props = {
   "data-testid"?: string;
 };
 
-export function WhatsAppLink({ children, message, className, onClick, ...rest }: Props) {
-  const href = waHref(message ?? buildGeneralMessage());
+export function WhatsAppLink({ children, intent = "general", message, className, onClick, ...rest }: Props) {
+  const copy = useCopy();
+  const href = waHref(message ?? copy.wa[intent]);
 
   return (
     <a

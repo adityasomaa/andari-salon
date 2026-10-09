@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { COPY } from "@/config/copy";
+import { SITE } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -31,7 +31,7 @@ export function Wordmark({
   return (
     <Image
       src={`/brand/logo-${tone}.svg`}
-      alt={COPY.brand.logoAlt}
+      alt={SITE.name}
       width={width}
       height={Math.round(width / WORDMARK_RATIO)}
       className={cn("h-auto w-full", className)}

@@ -1,53 +1,50 @@
 "use client";
 
 /**
- * A CTA is either an internal route or a WhatsApp message. Callers describe
- * intent through the shared `Cta` type and this decides which of the two it
- * is, so no page has to branch on it.
+ * A CTA is either an internal page, an in-page anchor, or a WhatsApp message.
+ * Callers describe intent through the shared `Cta` type and this decides which
+ * it is, so no page has to branch on it.
  */
 
 import Link from "next/link";
 
 import type { Cta } from "@/config/copy";
+import { href } from "@/config/i18n";
 import { cn } from "@/lib/utils";
 
-import { useHref, useTemplate } from "./template-context";
+import { useLocale } from "./locale-context";
 import { WhatsAppLink } from "./whatsapp-link";
 
-type Variant = "primary" | "ghost" | "quiet";
+type Variant = "primary" | "ghost";
 
 export function CtaLink({
   cta,
-  variant,
+  variant = "primary",
   className,
 }: {
   cta: Cta;
   variant?: Variant;
   className?: string;
 }) {
-  const template = useTemplate();
-  const resolve = useHref();
-  // Template 1's default CTA is a ruled link rather than a filled button.
-  const v: Variant = variant ?? (template?.key === "t1" ? "quiet" : "primary");
+  const locale = useLocale();
   const classes = cn(
     "t-btn",
-    v === "primary" && "t-btn-primary",
-    v === "ghost" && "t-btn-ghost",
-    v === "quiet" && (template?.key === "t1" ? "t-btn-quiet" : "t-btn-ghost"),
+    variant === "primary" ? "t-btn-primary" : "t-btn-ghost",
     className,
   );
 
-  if (cta.whatsapp) {
+  if (cta.wa) {
     return (
-      <WhatsAppLink className={classes}>
+      <WhatsAppLink className={classes} intent={cta.wa}>
         {cta.label}
         <Arrow />
       </WhatsAppLink>
     );
   }
 
+  const target = cta.to ? href(cta.to, locale) : (cta.href ?? href("home", locale));
   return (
-    <Link href={resolve(cta.href)} className={classes}>
+    <Link href={target} className={classes}>
       {cta.label}
       <Arrow />
     </Link>

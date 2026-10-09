@@ -2,35 +2,29 @@
 
 import type { ReactNode } from "react";
 
-import type { TemplateId } from "@/config/site";
+import { TEMPLATE_KEY } from "@/lib/template";
 
 import { PageTransitionProvider } from "./page-transition";
 import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
-import { TemplateProvider, templateInfo } from "./template-context";
-import { TemplateSwitcher } from "./template-switcher";
+import { TemplateProvider } from "./template-context";
 
 /**
- * Everything a template page sits inside.
+ * Everything a site page sits inside: header, footer, page transitions.
  *
- * `data-template` is the only switch: it selects one of the three token sets
- * in src/styles/templates.css, and every shared component reads from those
- * tokens rather than hard-coded values. That is what lets one set of
- * components render three genuinely different sites, and what keeps one
- * template's styling from reaching another's.
+ * `data-template` selects the design's token set in src/styles/templates.css;
+ * every shared component reads from those tokens rather than hard-coded values.
  */
-export function TemplateShell({ id, children }: { id: TemplateId; children: ReactNode }) {
-  const info = templateInfo(id);
+export function TemplateShell({ children }: { children: ReactNode }) {
   return (
-    <TemplateProvider id={id}>
-      <div data-template={info.key} className="flex min-h-screen-svh flex-col">
+    <TemplateProvider>
+      <div data-template={TEMPLATE_KEY} className="flex min-h-screen-svh flex-col">
         <PageTransitionProvider>
           <SiteHeader />
           <main id="main" className="flex-1">
             {children}
           </main>
           <SiteFooter />
-          <TemplateSwitcher />
         </PageTransitionProvider>
       </div>
     </TemplateProvider>

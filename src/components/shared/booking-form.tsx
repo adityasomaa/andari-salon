@@ -23,19 +23,19 @@
 import { motion } from "motion/react";
 import { useCallback, useId, useMemo, useRef, useState } from "react";
 
-import { COPY } from "@/config/copy";
-import { SERVICES_ARE_SAMPLE, SERVICE_CATEGORIES, TIME_SLOTS } from "@/config/services";
-import { bookingSchema, collectErrors, type FieldErrors } from "@/lib/booking-schema";
+import { SERVICES_ARE_SAMPLE, SERVICE_CATEGORIES, TIME_SLOTS, priceSummary } from "@/config/services";
+import { collectErrors, makeBookingSchema, type FieldErrors } from "@/lib/booking-schema";
 import { cn } from "@/lib/utils";
 
 import { DatePicker } from "./date-picker";
 import { Listbox, type ListboxGroup } from "./listbox";
+import { useCopy, useLocale } from "./locale-context";
 
 type Status = "idle" | "submitting" | "sent" | "error";
 
-const F = COPY.form;
-
 export function BookingForm({ className }: { className?: string }) {
+  const locale = useLocale();
+  const F = useCopy().form;
   const uid = useId().replace(/:/g, "");
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -54,11 +54,11 @@ export function BookingForm({ className }: { className?: string }) {
 
   const serviceGroups: ListboxGroup[] = useMemo(
     () =>
-      SERVICE_CATEGORIES.map((c) => ({
-        label: c.name,
-        options: c.items.map((s) => ({ value: s.id, label: s.name, meta: s.note })),
+      SERVICE_CATEGORIES.filter((c) => c.bookable).map((c) => ({
+        label: c.name[locale],
+        options: c.items.map((s) => ({ value: s.id, label: s.name[locale], meta: priceSummary(s, locale) })),
       })),
-    [],
+    [locale],
   );
 
   const field = (key: string) => `${uid}-${key}`;
@@ -83,10 +83,11 @@ export function BookingForm({ className }: { className?: string }) {
       date: date ?? "",
       time: time ?? "",
       notes,
+      locale,
       website,
     };
 
-    const parsed = bookingSchema.safeParse(payload);
+    const parsed = makeBookingSchema(locale).safeParse(payload);
     if (!parsed.success) {
       const fe = collectErrors(parsed.error);
       setErrors(fe);
@@ -261,7 +262,7 @@ export function BookingForm({ className }: { className?: string }) {
               <Field
                 id={field("serviceId")}
                 label={F.service.label}
-                hint={SERVICES_ARE_SAMPLE ? `${F.service.hint} Daftar ini masih contoh.` : F.service.hint}
+                hint={SERVICES_ARE_SAMPLE ? `${F.service.hint} ${F.service.sampleHint}` : F.service.hint}
                 error={errors.serviceId}
               >
                 <Listbox

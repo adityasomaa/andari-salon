@@ -14,7 +14,6 @@
  */
 
 import { AnimatePresence, motion } from "motion/react";
-import { usePathname } from "next/navigation";
 import {
   createContext,
   useCallback,
@@ -25,25 +24,13 @@ import {
   type ReactNode,
 } from "react";
 
-import { COPY } from "@/config/copy";
-import { LEGAL_NAV, TEMPLATES } from "@/config/site";
-import { templateInfo } from "@/lib/template";
+import { href } from "@/config/i18n";
+import { TEMPLATE_KEY } from "@/lib/template";
 import { makeCachedSnapshot, useClientValue } from "@/lib/use-client-value";
 import { cn } from "@/lib/utils";
 
+import { useCopy, useLocale } from "./locale-context";
 import { useUIState } from "./ui-state";
-
-/**
- * The panel lives above the template tree, in the root layout, so it cannot
- * read the template React context. It derives the scope from the URL instead,
- * which is where the template identity already lives, and falls back to t1 on
- * the chooser and the legal pages.
- */
-function useTemplateScope(): "t1" | "t2" | "t3" {
-  const pathname = usePathname();
-  const match = TEMPLATES.find((t) => pathname.startsWith(t.href));
-  return match ? templateInfo(match.id).key : "t1";
-}
 
 const STORE_KEY = "andari.cookie-consent.v1";
 
@@ -153,7 +140,9 @@ function AnalyticsGate({ enabled }: { enabled: boolean }) {
 function CookiePanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { consent, set } = useCookieConsent();
   const { menuOpen } = useUIState();
-  const scope = useTemplateScope();
+  const scope = TEMPLATE_KEY;
+  const locale = useLocale();
+  const copy = useCopy();
   const [detail, setDetail] = useState(false);
   const [analytics, setAnalytics] = useState(consent?.analytics ?? false);
 
@@ -166,7 +155,7 @@ function CookiePanel({ open, onClose }: { open: boolean; onClose: () => void }) 
     return () => window.removeEventListener("keydown", onKey);
   }, [open, consent, onClose]);
 
-  const C = COPY.cookies;
+  const C = copy.cookies;
 
   // Hard unmount rather than an exit animation. Inside AnimatePresence the
   // panel stays mounted for the length of its exit, and because it sits on a
@@ -268,10 +257,10 @@ function CookiePanel({ open, onClose }: { open: boolean; onClose: () => void }) 
             </div>
 
             <p className="mt-4 text-[0.75rem]" style={{ color: "var(--t-fg-faint, #6f6c52)" }}>
-              {LEGAL_NAV.map((l, i) => (
-                <span key={l.href}>
+              {copy.legalNav.map((l, i) => (
+                <span key={l.key}>
                   {i > 0 ? " · " : ""}
-                  <a href={l.href} className="underline underline-offset-4">
+                  <a href={href(l.key, locale)} className="underline underline-offset-4">
                     {l.label}
                   </a>
                 </span>
