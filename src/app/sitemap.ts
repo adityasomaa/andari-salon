@@ -1,12 +1,12 @@
 import type { MetadataRoute } from "next";
 
 import { LOCALES, ROUTES, ROUTE_KEYS } from "@/config/i18n";
-import { HUB } from "@/config/links";
+import { HUB, HUB_GLOGOR, hubUrl } from "@/config/links";
 import { absoluteUrl, languageAlternates } from "@/lib/seo";
 
 /**
  * Every page in both languages, each entry naming its counterpart, plus the
- * Indonesian-only link hub.
+ * Indonesian-only link hubs.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -24,6 +24,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...pages,
-    { url: HUB.url, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    ...[HUB, HUB_GLOGOR].map((hub) => ({
+      url: hubUrl(hub),
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
   ];
 }

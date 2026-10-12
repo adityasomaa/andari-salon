@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 
 import { getCopy } from "@/config/copy";
 import { LOCALES, LOCALE_META, ROUTES, type Locale, type RouteKey } from "@/config/i18n";
+import { hubUrl, type Hub } from "@/config/links";
 import { ALL_SERVICES, formatRupiah } from "@/config/services";
 import { ADDRESS, CONTACT, OPENING_HOURS, SITE } from "@/config/site";
 
@@ -132,4 +133,25 @@ function menuPriceRange(): string {
     typeof s.price === "number" ? [s.price] : Object.values(s.price),
   );
   return `${formatRupiah(Math.min(...all))} – ${formatRupiah(Math.max(...all))}`;
+}
+/** Metadata for a link hub page. Indonesian only, indexable. */
+export function hubMetadata(hub: Hub): Metadata {
+  const url = hubUrl(hub);
+  const { title, description } = hub.meta;
+  return {
+    title: { absolute: title },
+    description,
+    alternates: { canonical: url },
+    robots: { index: true, follow: true },
+    openGraph: {
+      type: "website",
+      siteName: SITE.name,
+      locale: LOCALE_META.id.og,
+      url,
+      title,
+      description,
+      images: [{ url: `${SITE.url}/og.png`, width: 1200, height: 630, alt: SITE.name }],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [`${SITE.url}/og.png`] },
+  };
 }

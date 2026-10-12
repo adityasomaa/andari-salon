@@ -18,7 +18,7 @@ const ORIGIN = process.argv[2] ?? "https://andarisalon.id";
 const PAGES_ID = ["/", "/treatment", "/produk", "/kemitraan", "/kontak", "/reservasi", "/privacy", "/terms"];
 const PAGES_EN = ["/en", "/en/treatments", "/en/products", "/en/partnership", "/en/contact", "/en/book", "/en/privacy", "/en/terms"];
 
-const ROUTES = [...PAGES_ID, ...PAGES_EN, "/booking", "/robots.txt", "/sitemap.xml"];
+const ROUTES = [...PAGES_ID, ...PAGES_EN, "/booking", "/glogor", "/robots.txt", "/sitemap.xml"];
 
 /** Old preview and slug URLs, and where they must land. */
 const REDIRECTS = [
@@ -256,7 +256,7 @@ async function checkSeo() {
   if (!robots.includes(`${SITE}/sitemap.xml`)) bad("robots.txt does not point at the sitemap");
 
   const sitemap = await (await fetch(`${ORIGIN}/sitemap.xml`)).text();
-  for (const path of [...PAGES_ID, ...PAGES_EN, "/booking"]) {
+  for (const path of [...PAGES_ID, ...PAGES_EN, "/booking", "/glogor"]) {
     const url = path === "/" ? SITE : `${SITE}${path}`;
     if (!sitemap.includes(`<loc>${url}</loc>`)) bad(`sitemap is missing ${url}`);
   }
@@ -281,6 +281,21 @@ async function checkSeo() {
     if (!menu.includes(needle)) bad(`treatment page is missing "${needle}"`);
   }
   ok("treatment page carries the price list");
+
+  // The branch hub must route to the branch, never to the main salon.
+  const glogor = await (await fetch(`${ORIGIN}/glogor`)).text();
+  for (const needle of [
+    "wa.me/6282345649490?text=",
+    "instagram.com/andarisalon.glogor",
+    "maps.app.goo.gl/57mdKgfP8k957zQs5",
+    "g.page/r/Cawlfo-ytEBTECE/review",
+    "Cabang Glogor Carik",
+  ]) {
+    if (!glogor.includes(needle)) bad(`/glogor is missing "${needle}"`);
+  }
+  if (glogor.includes("wa.me/6285218958623")) bad("/glogor links to the main salon's WhatsApp");
+  if (glogor.includes("/reservasi")) bad("/glogor links to the booking form, which goes to the main salon");
+  ok("/glogor routes WhatsApp, Instagram, Maps and reviews to the branch");
   if (!home.includes('"@type":"HairSalon"')) bad("LocalBusiness structured data is missing");
   if (home.includes("openingHoursSpecification")) {
     bad("structured data publishes opening hours, which are not known yet");

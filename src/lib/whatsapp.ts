@@ -13,8 +13,6 @@ import { CONTACT } from "@/config/site";
 
 import { formatLong } from "./dates";
 
-export const WA_BASE = `https://wa.me/${CONTACT.whatsappE164}`;
-
 export type BookingDetails = {
   name: string;
   phone: string;
@@ -46,6 +44,7 @@ export function buildBookingMessage(b: BookingDetails, locale: Locale): string {
   return lines.join("\n");
 }
 
-export function waHref(message: string): string {
-  return `${WA_BASE}?text=${encodeURIComponent(message)}`;
+/** `e164` defaults to the main salon; branch pages pass their own number. */
+export function waHref(message: string, e164: string = CONTACT.whatsappE164): string {
+  return `https://wa.me/${e164}?text=${encodeURIComponent(message)}`;
 }

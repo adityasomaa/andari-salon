@@ -79,6 +79,22 @@ export type OpeningHours = {
   days: OpeningHoursDay[];
 };
 
+/**
+ * The Glogor Carik branch, as the client sent it. Only what was given: no
+ * street address was supplied (the Maps link resolves to the place "Andari
+ * Salon Glogor" with coordinates only), so none is written out anywhere.
+ */
+export const BRANCH_GLOGOR = {
+  name: "Andari Salon Glogor",
+  area: "Glogor Carik",
+  whatsappDisplay: "082345649490",
+  whatsappE164: "6282345649490",
+  instagramHandle: "@andarisalon.glogor",
+  instagramUrl: "https://www.instagram.com/andarisalon.glogor/",
+  mapsUrl: "https://maps.app.goo.gl/57mdKgfP8k957zQs5",
+  reviewUrl: "https://g.page/r/Cawlfo-ytEBTECE/review",
+} as const;
+
 /** Instagram is the only social account. No other icons anywhere. */
 export const SOCIALS = [
   {

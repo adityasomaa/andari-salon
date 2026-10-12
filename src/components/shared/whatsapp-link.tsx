@@ -24,6 +24,8 @@ type Props = {
   intent?: WaIntent;
   /** Ready-made message, e.g. one composed server side. Wins over `intent`. */
   message?: string;
+  /** Another branch's number, in wa.me form. Defaults to the main salon. */
+  number?: string;
   className?: string;
   style?: React.CSSProperties;
   onClick?: () => void;
@@ -31,9 +33,9 @@ type Props = {
   "data-testid"?: string;
 };
 
-export function WhatsAppLink({ children, intent = "general", message, className, onClick, ...rest }: Props) {
+export function WhatsAppLink({ children, intent = "general", message, number, className, onClick, ...rest }: Props) {
   const copy = useCopy();
-  const href = waHref(message ?? copy.wa[intent]);
+  const href = waHref(message ?? copy.wa[intent], number);
 
   return (
     <a

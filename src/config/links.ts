@@ -1,14 +1,15 @@
 /**
- * The link hub served at /booking.
+ * The link hubs: one-screen pages meant for an Instagram bio.
  *
- * This is the page meant to sit in the Instagram bio: the shortest possible
- * list of ways to reach the salon, sized to fit one screen without scrolling.
- * Add, remove or reorder entries here and the page follows.
+ *   /booking  the main salon
+ *   /glogor   the Glogor Carik branch
  *
- * Indonesian only. It is one screen of buttons for the salon's own Instagram
- * audience; the site it links to has the language switch.
+ * Each is the shortest possible list of ways to reach that salon, sized to
+ * fit one screen without scrolling. Add, remove or reorder entries here and
+ * the page follows. Indonesian only: they are for each salon's own Instagram
+ * audience, and the site they link to has the language switch.
  *
- * Keep the list short. The page is built to fit a phone screen exactly, so
+ * Keep each list short. The page is built to fit a phone screen exactly, so
  * every row added is height taken from somewhere else. Six is comfortable,
  * eight is the practical ceiling.
  *
@@ -18,9 +19,9 @@
 
 import { getCopy } from "./copy";
 import { href } from "./i18n";
-import { ADDRESS, CONTACT, SITE } from "./site";
+import { ADDRESS, BRANCH_GLOGOR, CONTACT, SITE } from "./site";
 
-export type LinkKind = "whatsapp" | "instagram" | "site" | "maps" | "form" | "services";
+export type LinkKind = "whatsapp" | "instagram" | "site" | "maps" | "form" | "services" | "review";
 
 export type HubLink = {
   id: string;
@@ -35,12 +36,26 @@ export type HubLink = {
    * the button that was pressed.
    */
   message?: string;
+  /** WhatsApp number for this row, wa.me form. Defaults to the main salon. */
+  number?: string;
   /** Filled rather than outlined. One row at most. */
   primary?: boolean;
 };
 
-export const HUB = {
+export type Hub = {
+  path: string;
+  /** The line under the wordmark. */
+  tagline: string;
+  /** Accessible name for the list of links. */
+  label: string;
+  links: HubLink[];
+  meta: { title: string; description: string };
+};
+
+export const HUB: Hub = {
+  path: "/booking",
   tagline: "Salon rambut di Denpasar Barat",
+  label: "Tautan Andari Salon",
 
   links: [
     {
@@ -80,15 +95,66 @@ export const HUB = {
       label: "Website Andari Salon",
       href: href("home", "id"),
     },
-  ] satisfies HubLink[],
+  ],
 
   meta: {
     title: "Tautan Andari Salon",
     description: `Booking, Instagram, lokasi, dan website Andari Salon. ${ADDRESS.line1}, ${ADDRESS.village}, ${ADDRESS.district}.`,
   },
+};
 
-  /** Canonical for this page. */
-  get url(): string {
-    return `${SITE.url}/booking`;
+/**
+ * The Glogor Carik branch. Its own WhatsApp, Instagram, map and Google review
+ * link. No booking-form row: the form sends to the main salon's number, so it
+ * would route a Glogor booking to the wrong place. No treatment row either,
+ * until it is confirmed the branch uses the same price list.
+ */
+export const HUB_GLOGOR: Hub = {
+  path: "/glogor",
+  tagline: `Cabang ${BRANCH_GLOGOR.area}`,
+  label: `Tautan ${BRANCH_GLOGOR.name}`,
+
+  links: [
+    {
+      id: "wa-booking",
+      kind: "whatsapp",
+      label: "Booking lewat WhatsApp",
+      message: `Halo ${BRANCH_GLOGOR.name}, saya ingin booking.`,
+      number: BRANCH_GLOGOR.whatsappE164,
+      primary: true,
+    },
+    {
+      id: "instagram",
+      kind: "instagram",
+      label: BRANCH_GLOGOR.instagramHandle,
+      href: BRANCH_GLOGOR.instagramUrl,
+    },
+    {
+      id: "maps",
+      kind: "maps",
+      label: "Lokasi di Google Maps",
+      href: BRANCH_GLOGOR.mapsUrl,
+    },
+    {
+      id: "review",
+      kind: "review",
+      label: "Tulis ulasan di Google",
+      href: BRANCH_GLOGOR.reviewUrl,
+    },
+    {
+      id: "website",
+      kind: "site",
+      label: "Website Andari Salon",
+      href: href("home", "id"),
+    },
+  ],
+
+  meta: {
+    title: `Tautan ${BRANCH_GLOGOR.name}`,
+    description: `Booking, Instagram, lokasi, dan ulasan ${BRANCH_GLOGOR.name}, cabang ${BRANCH_GLOGOR.area}.`,
   },
-} as const;
+};
+
+export function hubUrl(hub: Hub): string {
+  return `${SITE.url}${hub.path}`;
+}

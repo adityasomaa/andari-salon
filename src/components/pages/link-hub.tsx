@@ -18,7 +18,7 @@
  * lock them out of it.
  *
  * Template 2's tokens: warm sand ground, pill controls, medium weight,
- * springy motion. Rows come from src/config/links.ts.
+ * springy motion. Rows come from src/config/links.ts, one Hub per salon.
  */
 
 import Link from "next/link";
@@ -27,9 +27,9 @@ import { Wordmark } from "@/components/shared/logo";
 import { WhatsAppLink } from "@/components/shared/whatsapp-link";
 import { useCopy } from "@/components/shared/locale-context";
 import { href } from "@/config/i18n";
-import { HUB, type HubLink } from "@/config/links";
+import type { Hub, HubLink } from "@/config/links";
 
-export function LinkHub() {
+export function LinkHub({ hub }: { hub: Hub }) {
   const copy = useCopy();
   return (
     <div
@@ -49,11 +49,11 @@ export function LinkHub() {
           priority
         />
 
-        <p className="t-label mt-3 short:mt-2 squat:mt-1.5">{HUB.tagline}</p>
+        <p className="t-label mt-3 short:mt-2 squat:mt-1.5">{hub.tagline}</p>
 
-        <nav aria-label="Tautan Andari Salon" className="mt-7 w-full short:mt-5 squat:mt-4">
+        <nav aria-label={hub.label} className="mt-7 w-full short:mt-5 squat:mt-4">
           <ul className="grid gap-2.5 short:gap-2 squat:grid-cols-2">
-            {HUB.links.map((link) => (
+            {hub.links.map((link) => (
               <li key={link.id}>
                 <Row link={link} />
               </li>
@@ -108,7 +108,7 @@ function Row({ link }: { link: HubLink }) {
 
   if (link.kind === "whatsapp") {
     return (
-      <WhatsAppLink className={ROW_CLASS} style={style} message={link.message}>
+      <WhatsAppLink className={ROW_CLASS} style={style} message={link.message} number={link.number}>
         {inner}
       </WhatsAppLink>
     );
@@ -173,6 +173,13 @@ function Icon({ kind }: { kind: HubLink["kind"] }) {
         <rect x="3.5" y="5" width="17" height="15" rx="2.5" />
         <path d="M3.5 9.5h17M8.5 3v4M15.5 3v4" />
         <path d="M8.5 14.5l2 2 4.5-4.5" />
+      </svg>
+    );
+  }
+  if (kind === "review") {
+    return (
+      <svg {...common}>
+        <path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" />
       </svg>
     );
   }
