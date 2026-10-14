@@ -68,7 +68,8 @@ const COPY_ID = {
     },
     partnership: {
       metaTitle: "Kemitraan",
-      metaDescription: "Ajukan kerja sama dengan Andari Salon lewat WhatsApp.",
+      metaDescription:
+        "Buka cabang Andari Salon bersama kami: estimasi investasi, proyeksi, dukungan, dan alur kemitraan. Minta proposalnya lewat WhatsApp.",
     },
     contact: {
       metaTitle: "Kontak",
@@ -161,22 +162,13 @@ const COPY_ID = {
       "Contoh isi. Daftar produk dan mereknya belum kami rilis, jadi kelompok di bawah ini masih bisa berubah.",
   },
 
-  /** Partnership page. */
+  /** Partnership page header. The body is in src/config/partnership.ts. */
   partnership: {
     label: "Kemitraan",
-    headline: "Bekerja sama dengan Andari Salon.",
+    headline: "Bermitra dengan Andari Salon.",
     description:
-      "Punya usaha, acara, atau ide kolaborasi? Ceritakan rencana Anda lewat WhatsApp, lalu kami balas untuk membicarakannya.",
-    cta: { label: "Ajukan kerja sama", wa: "partnership" } as Cta,
-    briefTitle: "Supaya bisa langsung kami bahas, sertakan:",
-    briefItems: [
-      "Nama Anda dan nama usaha atau instansi",
-      "Bentuk kerja sama yang Anda bayangkan",
-      "Waktu atau periode yang Anda rencanakan",
-      "Kontak yang bisa kami hubungi",
-    ],
-    briefNote: "Detail program kemitraan Andari Salon akan kami umumkan di halaman ini.",
-  },
+      "Andari Salon membuka kemitraan untuk menghadirkan cabang baru di Bali. Di sini ada gambaran investasi, dukungan, dan alurnya; rincian lengkap ada di proposal.",
+  } as SectionCopy,
 
   /** Booking page header. */
   booking: {
@@ -377,7 +369,8 @@ const COPY_EN: Copy = {
     },
     partnership: {
       metaTitle: "Partnership",
-      metaDescription: "Propose a partnership with Andari Salon on WhatsApp.",
+      metaDescription:
+        "Open an Andari Salon branch with us: estimated investment, projection, support and the partnership process. Request the proposal on WhatsApp.",
     },
     contact: {
       metaTitle: "Contact",
@@ -461,18 +454,9 @@ const COPY_EN: Copy = {
 
   partnership: {
     label: "Partnership",
-    headline: "Work with Andari Salon.",
+    headline: "Partner with Andari Salon.",
     description:
-      "Running a business, planning an event, or have an idea for a collaboration? Tell us about it on WhatsApp and we will reply to talk it through.",
-    cta: { label: "Propose a partnership", wa: "partnership" },
-    briefTitle: "So we can discuss it straight away, include:",
-    briefItems: [
-      "Your name and the name of your business or organisation",
-      "The kind of collaboration you have in mind",
-      "The timing or period you are planning for",
-      "How we can reach you",
-    ],
-    briefNote: "Details of the Andari Salon partnership programme will be announced on this page.",
+      "Andari Salon is opening partnerships to bring new branches to Bali. Here is an outline of the investment, support and process; the full details are in the proposal.",
   },
 
   booking: {

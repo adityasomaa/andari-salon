@@ -79,20 +79,35 @@ export type OpeningHours = {
   days: OpeningHoursDay[];
 };
 
+/** What the partnership proposal calls the main salon at ADDRESS. */
+export const MAIN_BRANCH_AREA = "Monang Maning";
+
 /**
- * The Glogor Carik branch, as the client sent it. Only what was given: no
- * street address was supplied (the Maps link resolves to the place "Andari
- * Salon Glogor" with coordinates only), so none is written out anywhere.
+ * The Glogor Carik branch, as the client sent it. The address comes from the
+ * partnership proposal (PROPOSAL KEMITRAAN ANDARI SALON.pdf, page 5).
  */
 export const BRANCH_GLOGOR = {
   name: "Andari Salon Glogor",
   area: "Glogor Carik",
+  address: "Jl. Taman Pancing Timur, Jl. Budi Permata, Pemogan, Kec. Denpasar Selatan, Kota Denpasar, Bali 80221",
   whatsappDisplay: "082345649490",
   whatsappE164: "6282345649490",
   instagramHandle: "@andarisalon.glogor",
   instagramUrl: "https://www.instagram.com/andarisalon.glogor/",
   mapsUrl: "https://maps.app.goo.gl/57mdKgfP8k957zQs5",
   reviewUrl: "https://g.page/r/Cawlfo-ytEBTECE/review",
+} as const;
+
+/**
+ * The partnership team's own contact, from the proposal's last page. A
+ * different WhatsApp from the salon's: bookings go to CONTACT, partnership
+ * enquiries come here. The proposal also names a Facebook page and a TikTok
+ * account, but without links, so they are not linked anywhere.
+ */
+export const PARTNERSHIP_CONTACT = {
+  whatsappDisplay: "0822-6630-7929",
+  whatsappE164: "6282266307929",
+  email: "andarisalon13@gmail.com",
 } as const;
 
 /** Instagram is the only social account. No other icons anywhere. */

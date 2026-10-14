@@ -107,8 +107,18 @@ on the home page is written only from known facts (where the salon is, what it
 does, how booking works). The client's own text and photos replace it and the
 generated graphics when they arrive.
 
-**Partnership has no programme yet.** The page invites a proposal on WhatsApp
-and lists what to include; it does not describe terms that do not exist.
+**Partnership comes from the client's proposal.** `src/config/partnership.ts`
+transcribes *PROPOSAL KEMITRAAN ANDARI SALON.pdf*: about, support (POS Hero,
+team structure, training), the Rp 250.000.000 investment estimate and Rp
+5.000.000 deposit, the client's low/medium/high monthly projection (shown with
+a "not a guarantee" line; `npm run verify` fails if that line disappears), the
+eleven-step process, both branches, the 20+ planned areas and four
+testimonials. Partnership enquiries go to the partnership WhatsApp and email
+in `PARTNERSHIP_CONTACT`, not the booking number. The detailed monthly cost
+lines stay in the proposal, which the page offers on request. Photos in
+`public/photos/` are cropped from the proposal's real photos of the salon;
+its rendered interiors were not used. Replace them with the originals when
+the client sends them.
 
 ---
 
