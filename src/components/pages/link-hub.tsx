@@ -22,12 +22,13 @@
  */
 
 import Link from "next/link";
+import { useId, useRef } from "react";
 
 import { Wordmark } from "@/components/shared/logo";
 import { WhatsAppLink } from "@/components/shared/whatsapp-link";
 import { useCopy } from "@/components/shared/locale-context";
 import { href } from "@/config/i18n";
-import type { Hub, HubLink } from "@/config/links";
+import type { Hub, HubChoice, HubLink } from "@/config/links";
 
 export function LinkHub({ hub }: { hub: Hub }) {
   const copy = useCopy();
@@ -106,6 +107,14 @@ function Row({ link }: { link: HubLink }) {
     </>
   );
 
+  if (link.choices) {
+    return (
+      <ChoiceRow title={link.choices.title} items={link.choices.items} kind={link.kind} style={style}>
+        {inner}
+      </ChoiceRow>
+    );
+  }
+
   if (link.kind === "whatsapp") {
     return (
       <WhatsAppLink className={ROW_CLASS} style={style} message={link.message} number={link.number}>
@@ -126,6 +135,120 @@ function Row({ link }: { link: HubLink }) {
     <Link href={link.href ?? "/"} className={ROW_CLASS} style={style}>
       {inner}
     </Link>
+  );
+}
+
+/* ------------------------------------------------------- branch chooser */
+
+/**
+ * A row that opens a short list, e.g. "which branch?". Native <dialog> with
+ * showModal(): the browser supplies the top layer, the backdrop, Escape to
+ * close, focus moved inside and returned to the row on close, so none of
+ * that is re-implemented here, and it sits above everything without a
+ * z-index of its own.
+ */
+function ChoiceRow({
+  title,
+  items,
+  kind,
+  style,
+  children,
+}: {
+  title: string;
+  items: HubChoice[];
+  kind: HubLink["kind"];
+  style: React.CSSProperties;
+  children: React.ReactNode;
+}) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+  const close = () => ref.current?.close();
+
+  return (
+    <>
+      <button
+        type="button"
+        className={ROW_CLASS}
+        style={style}
+        aria-haspopup="dialog"
+        onClick={() => ref.current?.showModal()}
+      >
+        {children}
+      </button>
+
+      <dialog
+        ref={ref}
+        aria-labelledby={titleId}
+        data-template="t2"
+        className="hub-sheet m-auto w-[min(26rem,calc(100vw-2.5rem))] p-0"
+        // A click on the backdrop lands on the dialog element itself.
+        onClick={(e) => {
+          if (e.target === e.currentTarget) close();
+        }}
+        style={{
+          background: "var(--t-bg)",
+          color: "var(--t-fg)",
+          border: "1px solid var(--t-line-strong)",
+          borderRadius: "var(--t-radius)",
+        }}
+      >
+        <div className="grid gap-4 p-5">
+          <div className="flex items-center justify-between gap-3">
+            <p id={titleId} className="text-[1.05rem] font-medium">
+              {title}
+            </p>
+            <button
+              type="button"
+              onClick={close}
+              aria-label="Tutup"
+              className="flex size-10 shrink-0 items-center justify-center"
+              style={{ border: "1px solid var(--t-line-strong)", borderRadius: "var(--t-radius-pill)" }}
+            >
+              <svg aria-hidden viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+          </div>
+
+          <ul className="grid gap-2.5">
+            {items.map((c) => {
+              const body = (
+                <>
+                  <Icon kind={kind} />
+                  <span className="grid min-w-0 gap-0.5 text-left">
+                    <span className="font-medium">{c.label}</span>
+                    {c.detail ? (
+                      <span className="text-[0.75rem] leading-snug" style={{ color: "var(--t-fg-muted)" }}>
+                        {c.detail}
+                      </span>
+                    ) : null}
+                  </span>
+                </>
+              );
+              const cls = "flex w-full items-center gap-3 px-4 py-3 text-[0.92rem]";
+              const cstyle: React.CSSProperties = {
+                background: "var(--t-surface)",
+                border: "1px solid var(--t-line-strong)",
+                borderRadius: "var(--t-radius-sm)",
+              };
+              return (
+                <li key={c.label}>
+                  {c.number || c.message ? (
+                    <WhatsAppLink className={cls} style={cstyle} message={c.message} number={c.number} onClick={close}>
+                      {body}
+                    </WhatsAppLink>
+                  ) : (
+                    <a href={c.href} target="_blank" rel="noopener noreferrer" className={cls} style={cstyle} onClick={close}>
+                      {body}
+                    </a>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </dialog>
+    </>
   );
 }
 
@@ -173,6 +296,14 @@ function Icon({ kind }: { kind: HubLink["kind"] }) {
         <rect x="3.5" y="5" width="17" height="15" rx="2.5" />
         <path d="M3.5 9.5h17M8.5 3v4M15.5 3v4" />
         <path d="M8.5 14.5l2 2 4.5-4.5" />
+      </svg>
+    );
+  }
+  if (kind === "partnership") {
+    return (
+      <svg {...common}>
+        <path d="M8 11l2.5 2.5a1.8 1.8 0 0 0 2.5 0l4-4" />
+        <path d="M3 9l4-4 4 2 2-1 4 1 4 4-7 7-2-2-2 2-7-7z" />
       </svg>
     );
   }

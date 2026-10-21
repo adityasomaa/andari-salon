@@ -1,10 +1,15 @@
 /**
  * The link hubs: one-screen pages meant for an Instagram bio.
  *
- *   /booking  the main salon
- *   /glogor   the Glogor Carik branch
+ *   /booking        the official hub, covering every branch
+ *   /monang-maning  the Monang Maning branch
+ *   /glogor         the Glogor Carik branch
  *
- * Each is the shortest possible list of ways to reach that salon, sized to
+ * The official hub follows the shape the client pointed to (TM Facial Glow's
+ * /booking): "Booking" and "Lokasi" open a short list of branches, each with
+ * its own WhatsApp or map, instead of guessing which branch someone means.
+ *
+ * Each list is the shortest possible set of ways to reach the salon, sized to
  * fit one screen without scrolling. Add, remove or reorder entries here and
  * the page follows. Indonesian only: they are for each salon's own Instagram
  * audience, and the site they link to has the language switch.
@@ -19,9 +24,28 @@
 
 import { getCopy } from "./copy";
 import { href } from "./i18n";
-import { ADDRESS, BRANCH_GLOGOR, CONTACT, SITE } from "./site";
+import { ADDRESS, BRANCH_GLOGOR, CONTACT, MAIN_BRANCH_AREA, SITE } from "./site";
 
-export type LinkKind = "whatsapp" | "instagram" | "site" | "maps" | "form" | "services" | "review";
+export type LinkKind =
+  | "whatsapp"
+  | "instagram"
+  | "site"
+  | "maps"
+  | "form"
+  | "services"
+  | "review"
+  | "partnership";
+
+/** One entry in a row's branch list. */
+export type HubChoice = {
+  label: string;
+  /** A second line, e.g. the address. */
+  detail?: string;
+  href?: string;
+  /** WhatsApp choices: the greeting and the branch's number. */
+  message?: string;
+  number?: string;
+};
 
 export type HubLink = {
   id: string;
@@ -40,6 +64,8 @@ export type HubLink = {
   number?: string;
   /** Filled rather than outlined. One row at most. */
   primary?: boolean;
+  /** When set, the row opens this list instead of going anywhere itself. */
+  choices?: { title: string; items: HubChoice[] };
 };
 
 export type Hub = {
@@ -52,10 +78,93 @@ export type Hub = {
   meta: { title: string; description: string };
 };
 
-export const HUB: Hub = {
+/** Every branch, in one place, for the official hub's branch lists. */
+export const BRANCHES = [
+  {
+    area: MAIN_BRANCH_AREA,
+    name: `${SITE.name} ${MAIN_BRANCH_AREA}`,
+    address: ADDRESS.full,
+    whatsappE164: CONTACT.whatsappE164,
+    mapsUrl: ADDRESS.mapsUrl,
+  },
+  {
+    area: BRANCH_GLOGOR.area,
+    name: BRANCH_GLOGOR.name,
+    address: BRANCH_GLOGOR.address,
+    whatsappE164: BRANCH_GLOGOR.whatsappE164,
+    mapsUrl: BRANCH_GLOGOR.mapsUrl,
+  },
+];
+
+const bookingGreeting = (name: string) => `Halo ${name}, saya ingin booking.`;
+
+export const HUB_OFFICIAL: Hub = {
   path: "/booking",
-  tagline: "Salon rambut di Denpasar Barat",
-  label: "Tautan Andari Salon",
+  tagline: "Salon rambut di Denpasar",
+  label: "Tautan resmi Andari Salon",
+
+  links: [
+    {
+      id: "booking",
+      kind: "whatsapp",
+      label: "Booking treatment",
+      primary: true,
+      choices: {
+        title: "Booking di cabang mana?",
+        items: BRANCHES.map((b) => ({
+          label: `Cabang ${b.area}`,
+          detail: b.address,
+          message: bookingGreeting(b.name),
+          number: b.whatsappE164,
+        })),
+      },
+    },
+    {
+      id: "treatment",
+      kind: "services",
+      label: "Menu treatment & harga",
+      href: href("treatment", "id"),
+    },
+    {
+      id: "location",
+      kind: "maps",
+      label: "Lokasi cabang",
+      choices: {
+        title: "Lokasi cabang",
+        items: BRANCHES.map((b) => ({ label: `Cabang ${b.area}`, detail: b.address, href: b.mapsUrl })),
+      },
+    },
+    {
+      id: "partnership",
+      kind: "partnership",
+      label: "Kemitraan Andari Salon",
+      href: href("partnership", "id"),
+    },
+    {
+      id: "instagram",
+      kind: "instagram",
+      label: CONTACT.instagramHandle,
+      href: CONTACT.instagramUrl,
+    },
+    {
+      id: "website",
+      kind: "site",
+      label: "Tentang Andari Salon",
+      href: href("home", "id"),
+    },
+  ],
+
+  meta: {
+    title: "Tautan resmi Andari Salon",
+    description: `Booking, menu treatment, lokasi cabang ${BRANCHES.map((b) => b.area).join(" dan ")}, dan kemitraan Andari Salon.`,
+  },
+};
+
+/** The Monang Maning branch: the salon at ADDRESS. */
+export const HUB_MONANG_MANING: Hub = {
+  path: "/monang-maning",
+  tagline: `Cabang ${MAIN_BRANCH_AREA}`,
+  label: `Tautan Andari Salon ${MAIN_BRANCH_AREA}`,
 
   links: [
     {
@@ -66,6 +175,7 @@ export const HUB: Hub = {
       primary: true,
     },
     {
+      // The site's booking form sends to this branch's number.
       id: "form",
       kind: "form",
       label: "Isi formulir booking",
@@ -98,15 +208,15 @@ export const HUB: Hub = {
   ],
 
   meta: {
-    title: "Tautan Andari Salon",
-    description: `Booking, Instagram, lokasi, dan website Andari Salon. ${ADDRESS.line1}, ${ADDRESS.village}, ${ADDRESS.district}.`,
+    title: `Tautan Andari Salon ${MAIN_BRANCH_AREA}`,
+    description: `Booking, Instagram, lokasi, dan website Andari Salon cabang ${MAIN_BRANCH_AREA}. ${ADDRESS.line1}, ${ADDRESS.village}, ${ADDRESS.district}.`,
   },
 };
 
 /**
  * The Glogor Carik branch. Its own WhatsApp, Instagram, map and Google review
- * link. No booking-form row: the form sends to the main salon's number, so it
- * would route a Glogor booking to the wrong place. No treatment row either,
+ * link. No booking-form row: the form sends to the Monang Maning number, so
+ * it would route a Glogor booking to the wrong place. No treatment row either,
  * until it is confirmed the branch uses the same price list.
  */
 export const HUB_GLOGOR: Hub = {
@@ -119,7 +229,7 @@ export const HUB_GLOGOR: Hub = {
       id: "wa-booking",
       kind: "whatsapp",
       label: "Booking lewat WhatsApp",
-      message: `Halo ${BRANCH_GLOGOR.name}, saya ingin booking.`,
+      message: bookingGreeting(BRANCH_GLOGOR.name),
       number: BRANCH_GLOGOR.whatsappE164,
       primary: true,
     },
@@ -154,6 +264,8 @@ export const HUB_GLOGOR: Hub = {
     description: `Booking, Instagram, lokasi, dan ulasan ${BRANCH_GLOGOR.name}, cabang ${BRANCH_GLOGOR.area}.`,
   },
 };
+
+export const HUBS = [HUB_OFFICIAL, HUB_MONANG_MANING, HUB_GLOGOR];
 
 export function hubUrl(hub: Hub): string {
   return `${SITE.url}${hub.path}`;

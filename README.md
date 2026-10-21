@@ -28,7 +28,8 @@ the matching new page.
 | Contact | `/kontak` | `/en/contact` |
 | Booking form | `/reservasi` | `/en/book` |
 | Privacy, terms | `/privacy`, `/terms` | `/en/privacy`, `/en/terms` |
-| Link hub for the Instagram bio | `/booking` | (Indonesian only) |
+| Official link hub, all branches | `/booking` | (Indonesian only) |
+| Branch link hubs | `/monang-maning`, `/glogor` | (Indonesian only) |
 
 Header: Beranda, Treatment, Produk, Kemitraan, Kontak, the ID/EN switch, and a
 filled **Booking** button that opens WhatsApp with the booking greeting. The
@@ -60,13 +61,21 @@ CTA and the link hub.
   normalised to the 08 form; a number with no `+` that is not Indonesian is
   still refused.
 
-## The link hub at /booking
+## The link hubs
 
-`/booking` is the page for the Instagram bio: the wordmark, one line, and a
-stack of pills. Nothing else. It fits one screen and does not scroll: height is
-`100svh` (not `100vh`, which on a phone is taller than what you can see), and a
-`squat` breakpoint splits the rows into two columns when held sideways. Rows
-live in `src/config/links.ts`. It is Indonesian only.
+One-screen pages for Instagram bios, all in `src/config/links.ts`:
+
+- `/booking` is the official hub, modelled on TM Facial Glow's: "Booking
+  treatment" and "Lokasi cabang" open a short list of branches (a native
+  `<dialog>`), each with its own WhatsApp number or map, so a booking never
+  lands at the wrong branch. Then the treatment menu, partnership, Instagram
+  and the website. Add a branch to `BRANCHES` and both lists follow.
+- `/monang-maning` and `/glogor` are the branches' own hubs. Only Monang
+  Maning has a booking-form row, because the site's form sends to its number.
+
+Each fits one screen and does not scroll: height is `100svh` (not `100vh`,
+which on a phone is taller than what you can see), and a `squat` breakpoint
+splits the rows into two columns when held sideways.
 
 ---
 

@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { LOCALES, ROUTES, ROUTE_KEYS } from "@/config/i18n";
-import { HUB, HUB_GLOGOR, hubUrl } from "@/config/links";
+import { HUBS, hubUrl } from "@/config/links";
 import { absoluteUrl, languageAlternates } from "@/lib/seo";
 
 /**
@@ -24,7 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...pages,
-    ...[HUB, HUB_GLOGOR].map((hub) => ({
+    ...HUBS.map((hub) => ({
       url: hubUrl(hub),
       lastModified: now,
       changeFrequency: "weekly" as const,

@@ -18,7 +18,7 @@ const ORIGIN = process.argv[2] ?? "https://andarisalon.id";
 const PAGES_ID = ["/", "/treatment", "/produk", "/kemitraan", "/kontak", "/reservasi", "/privacy", "/terms"];
 const PAGES_EN = ["/en", "/en/treatments", "/en/products", "/en/partnership", "/en/contact", "/en/book", "/en/privacy", "/en/terms"];
 
-const ROUTES = [...PAGES_ID, ...PAGES_EN, "/booking", "/glogor", "/robots.txt", "/sitemap.xml"];
+const ROUTES = [...PAGES_ID, ...PAGES_EN, "/booking", "/monang-maning", "/glogor", "/robots.txt", "/sitemap.xml"];
 
 /** Old preview and slug URLs, and where they must land. */
 const REDIRECTS = [
@@ -257,7 +257,7 @@ async function checkSeo() {
   if (!robots.includes(`${SITE}/sitemap.xml`)) bad("robots.txt does not point at the sitemap");
 
   const sitemap = await (await fetch(`${ORIGIN}/sitemap.xml`)).text();
-  for (const path of [...PAGES_ID, ...PAGES_EN, "/booking", "/glogor"]) {
+  for (const path of [...PAGES_ID, ...PAGES_EN, "/booking", "/monang-maning", "/glogor"]) {
     const url = path === "/" ? SITE : `${SITE}${path}`;
     if (!sitemap.includes(`<loc>${url}</loc>`)) bad(`sitemap is missing ${url}`);
   }
@@ -297,6 +297,23 @@ async function checkSeo() {
   if (glogor.includes("wa.me/6285218958623")) bad("/glogor links to the main salon's WhatsApp");
   if (glogor.includes("/reservasi")) bad("/glogor links to the booking form, which goes to the main salon");
   ok("/glogor routes WhatsApp, Instagram, Maps and reviews to the branch");
+
+  // The official hub offers every branch; the Monang Maning hub only its own.
+  const official = await (await fetch(`${ORIGIN}/booking`)).text();
+  for (const needle of [
+    "wa.me/6285218958623?text=Halo%20Andari%20Salon%20Monang%20Maning",
+    "wa.me/6282345649490?text=Halo%20Andari%20Salon%20Glogor",
+    "maps.app.goo.gl/57mdKgfP8k957zQs5",
+    "/kemitraan",
+    "/treatment",
+  ]) {
+    if (!official.includes(needle)) bad(`/booking (official hub) is missing "${needle}"`);
+  }
+  const mm = await (await fetch(`${ORIGIN}/monang-maning`)).text();
+  if (!mm.includes("wa.me/6285218958623?text=")) bad("/monang-maning does not link the Monang Maning WhatsApp");
+  if (mm.includes("6282345649490")) bad("/monang-maning links the Glogor WhatsApp");
+  if (!mm.includes("Cabang Monang Maning")) bad("/monang-maning does not say which branch it is");
+  ok("/booking offers both branches; /monang-maning links only its own");
 
   // Partnership enquiries go to the partnership team, and the projection is
   // never shown without the line saying it is not a guarantee.
