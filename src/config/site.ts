@@ -40,9 +40,8 @@ export const ADDRESS = {
   get mapsQuery(): string {
     return encodeURIComponent(`${SITE.name}, ${this.line1}, ${this.village}, ${this.district}, ${this.city}, ${this.province} ${this.postalCode}`);
   },
-  get mapsUrl(): string {
-    return `https://www.google.com/maps/search/?api=1&query=${this.mapsQuery}`;
-  },
+  /** The salon's own Google Maps place, as the client sent it. */
+  mapsUrl: "https://maps.app.goo.gl/YNhBcVnGeUhVjTrq5",
   get mapsEmbedUrl(): string {
     return `https://maps.google.com/maps?q=${this.mapsQuery}&z=16&output=embed`;
   },
@@ -81,6 +80,17 @@ export type OpeningHours = {
 
 /** What the partnership proposal calls the main salon at ADDRESS. */
 export const MAIN_BRANCH_AREA = "Monang Maning";
+
+/**
+ * The Monang Maning branch's own channels, as the client sent them. Its
+ * WhatsApp is the salon's (CONTACT) and its address is ADDRESS; the brand
+ * Instagram stays @andarisalon.id on the site and the official hub.
+ */
+export const BRANCH_MONANG_MANING = {
+  instagramHandle: "@andarisalon.monangmaning",
+  instagramUrl: "https://www.instagram.com/andarisalon.monangmaning/",
+  reviewUrl: "https://g.page/r/CUTBk9-0B_2SEAE/review",
+} as const;
 
 /**
  * The Glogor Carik branch, as the client sent it. The address comes from the

@@ -24,7 +24,7 @@
 
 import { getCopy } from "./copy";
 import { href } from "./i18n";
-import { ADDRESS, BRANCH_GLOGOR, CONTACT, MAIN_BRANCH_AREA, SITE } from "./site";
+import { ADDRESS, BRANCH_GLOGOR, BRANCH_MONANG_MANING, CONTACT, MAIN_BRANCH_AREA, SITE } from "./site";
 
 export type LinkKind =
   | "whatsapp"
@@ -190,14 +190,20 @@ export const HUB_MONANG_MANING: Hub = {
     {
       id: "instagram",
       kind: "instagram",
-      label: CONTACT.instagramHandle,
-      href: CONTACT.instagramUrl,
+      label: BRANCH_MONANG_MANING.instagramHandle,
+      href: BRANCH_MONANG_MANING.instagramUrl,
     },
     {
       id: "maps",
       kind: "maps",
       label: "Lokasi di Google Maps",
       href: ADDRESS.mapsUrl,
+    },
+    {
+      id: "review",
+      kind: "review",
+      label: "Tulis ulasan di Google",
+      href: BRANCH_MONANG_MANING.reviewUrl,
     },
     {
       id: "website",
@@ -209,7 +215,7 @@ export const HUB_MONANG_MANING: Hub = {
 
   meta: {
     title: `Tautan Andari Salon ${MAIN_BRANCH_AREA}`,
-    description: `Booking, Instagram, lokasi, dan website Andari Salon cabang ${MAIN_BRANCH_AREA}. ${ADDRESS.line1}, ${ADDRESS.village}, ${ADDRESS.district}.`,
+    description: `Booking, Instagram, lokasi, dan ulasan Andari Salon cabang ${MAIN_BRANCH_AREA}. ${ADDRESS.line1}, ${ADDRESS.village}, ${ADDRESS.district}.`,
   },
 };
 

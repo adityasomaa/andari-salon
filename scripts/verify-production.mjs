@@ -313,6 +313,13 @@ async function checkSeo() {
   if (!mm.includes("wa.me/6285218958623?text=")) bad("/monang-maning does not link the Monang Maning WhatsApp");
   if (mm.includes("6282345649490")) bad("/monang-maning links the Glogor WhatsApp");
   if (!mm.includes("Cabang Monang Maning")) bad("/monang-maning does not say which branch it is");
+  for (const needle of [
+    "instagram.com/andarisalon.monangmaning",
+    "maps.app.goo.gl/YNhBcVnGeUhVjTrq5",
+    "g.page/r/CUTBk9-0B_2SEAE/review",
+  ]) {
+    if (!mm.includes(needle)) bad(`/monang-maning is missing "${needle}"`);
+  }
   ok("/booking offers both branches; /monang-maning links only its own");
 
   // Partnership enquiries go to the partnership team, and the projection is
