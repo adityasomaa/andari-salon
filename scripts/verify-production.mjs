@@ -39,7 +39,8 @@ const ASSETS = [
   "/brand/logo-olive.svg",
   "/brand/logo-bone.svg",
   "/brand/monogram-olive.svg",
-  ...["exterior", "interior-1", "interior-2", "lounge", "reception", "styling"].map((n) => `/photos/${n}.webp`),
+  ...["hero", "booking-banner", "exterior", "interior-1", "interior-2", "lounge", "reception", "styling"].map((n) => `/photos/${n}.webp`),
+  ...["hair-cut", "wash-styling", "hair-colouring", "hair-treatment", "hair-care", "add-ons"].map((n) => `/photos/treatment/${n}.webp`),
   "/fonts/NeueMontreal-Light.woff2",
   "/fonts/NeueMontreal-Regular.woff2",
   "/fonts/NeueMontreal-Medium.woff2",
@@ -282,6 +283,13 @@ async function checkSeo() {
     if (!menu.includes(needle)) bad(`treatment page is missing "${needle}"`);
   }
   ok("treatment page carries the price list");
+
+  // The client's photos, not the generated placeholders, on home and menu.
+  for (const needle of ["/photos/hero.webp", "/photos/exterior.webp", "/photos/booking-banner.webp", "/photos/treatment/hair-cut.webp"]) {
+    if (!home.includes(needle)) bad(`home is missing ${needle}`);
+  }
+  if (!menu.includes("/photos/treatment/add-ons.webp")) bad("treatment page is missing its group photos");
+  ok("home and treatment pages show the client's photos");
 
   // The branch hub must route to the branch, never to the main salon.
   const glogor = await (await fetch(`${ORIGIN}/glogor`)).text();

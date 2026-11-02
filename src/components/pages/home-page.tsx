@@ -5,10 +5,11 @@
  * No manifesto, no invented credentials.
  */
 
-import { Art } from "@/components/shared/art";
+import Image from "next/image";
+
 import { CtaLink } from "@/components/shared/cta-link";
 import { Hero } from "@/components/shared/hero";
-import { useCopy } from "@/components/shared/locale-context";
+import { useCopy, useLocale } from "@/components/shared/locale-context";
 import { LocationBlock } from "@/components/shared/location-block";
 import { Reveal } from "@/components/shared/reveal";
 import { SectionHeader } from "@/components/shared/section-header";
@@ -40,11 +41,23 @@ export function HomePage() {
 
       <section className="t-section" style={{ background: "var(--t-bg-alt)" }}>
         <div className="t-shell">
-          <div className="t-card relative overflow-hidden">
-            <div className="pointer-events-none absolute inset-0 opacity-60">
-              <Art name="band" decorative sizes="100vw" />
+          {/* The client's banner keeps its middle empty for this text. It is
+              too wide to crop on a phone, so there it sits above the text
+              as a strip, and only overlaps from lg up. The card is white to
+              match the banner's ground. */}
+          <div className="t-card relative overflow-hidden" style={{ background: "#fff" }}>
+            <div className="pointer-events-none relative aspect-[1419/403] w-full lg:absolute lg:inset-0 lg:aspect-auto">
+              <Image
+                src="/photos/booking-banner.webp"
+                alt=""
+                aria-hidden
+                fill
+                sizes="(min-width: 1280px) 1200px, 100vw"
+                unoptimized
+                className="object-cover"
+              />
             </div>
-            <div className="relative grid gap-8 p-6 sm:p-12">
+            <div className="relative mx-auto grid gap-8 p-6 sm:p-10 lg:max-w-[50%] lg:py-14">
               <SectionHeader copy={copy.bookingEntry} />
             </div>
           </div>
@@ -55,11 +68,11 @@ export function HomePage() {
 }
 
 /**
- * Tentang Andari Salon. Text beside a graphic that holds the place of a photo
- * of the salon until the client's photos arrive.
+ * Tentang Andari Salon. Text beside the client's photo of the shopfront.
  */
 function About() {
   const { about } = useCopy();
+  const locale = useLocale();
 
   return (
     <section id="tentang" aria-labelledby="about-heading" className="t-section" style={{ background: "var(--t-bg)" }}>
@@ -88,11 +101,16 @@ function About() {
               <CtaLink cta={about.cta} variant="ghost" />
             </Reveal>
           </div>
-          <Reveal kind="fade" className="relative min-h-[16rem] lg:min-h-full">
-            <div className="absolute inset-0">
-              <Art name="column-0" decorative sizes="(min-width: 1024px) 40vw, 100vw" />
-            </div>
-          </Reveal>
+          <div className="relative min-h-[20rem] lg:min-h-full">
+            <Image
+              src="/photos/exterior.webp"
+              alt={locale === "en" ? "The Andari Salon shopfront and sign" : "Tampak depan dan papan nama Andari Salon"}
+              fill
+              sizes="(min-width: 1024px) 40vw, 100vw"
+              unoptimized
+              className="object-cover"
+            />
+          </div>
         </div>
       </div>
     </section>

@@ -111,10 +111,15 @@ the form tells visitors to put them in the notes.
 brands or prices, and the page says it is a sample. Replace the groups and set
 `PRODUCTS_ARE_SAMPLE = false`.
 
-**About text and photos are a first draft.** The "Tentang Andari Salon" section
-on the home page is written only from known facts (where the salon is, what it
-does, how booking works). The client's own text and photos replace it and the
-generated graphics when they arrive.
+**The About text is a first draft.** "Tentang Andari Salon" on the home page is
+written only from known facts (where the salon is, what it does, how booking
+works). The client's own text replaces it when it arrives.
+
+**Photos on Beranda and Treatment are the client's.** From their Drive folder,
+converted to WebP in `public/photos/`: the hero, the shopfront in About, the
+booking banner, and one photo per treatment group in `photos/treatment/`, named
+after the group's id in `src/config/services.ts`. Products and Partnership
+still use generated tiles or crops from the proposal until theirs arrive.
 
 **Partnership comes from the client's proposal.** `src/config/partnership.ts`
 transcribes *PROPOSAL KEMITRAAN ANDARI SALON.pdf*: about, support (POS Hero,

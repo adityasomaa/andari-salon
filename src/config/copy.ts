@@ -108,7 +108,7 @@ const COPY_ID = {
     headline: "Tentang Andari Salon.",
     body: [
       `Andari Salon adalah salon rambut di ${ADDRESS.line1}, ${ADDRESS.village}, Denpasar Barat. Kami mengerjakan potong rambut, keramas dan penataan, pewarnaan, serta hair treatment dan hair care.`,
-      "Jadwal kunjungan diatur lebih dulu lewat WhatsApp, jadi Anda bisa memilih hari dan jam sebelum datang. Foto ruang dan cerita lengkap kami menyusul di sini.",
+      "Jadwal kunjungan diatur lebih dulu lewat WhatsApp, jadi Anda bisa memilih hari dan jam sebelum datang.",
     ],
     cta: { label: "Lihat treatment", to: "treatment" } as Cta,
   },
@@ -404,7 +404,7 @@ const COPY_EN: Copy = {
     headline: "About Andari Salon.",
     body: [
       `Andari Salon is a hair salon on ${ADDRESS.line1}, ${ADDRESS.village}, West Denpasar. We do cuts, washes and styling, colour, and hair treatments and care.`,
-      "Visits are arranged ahead over WhatsApp, so you can choose the day and time before you come. Photos of the space and the rest of our story are on their way.",
+      "Visits are arranged ahead over WhatsApp, so you can choose the day and time before you come.",
     ],
     cta: { label: "See treatments", to: "treatment" },
   },

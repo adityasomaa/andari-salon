@@ -9,6 +9,8 @@
  * own column headings.
  */
 
+import Image from "next/image";
+
 import {
   LENGTHS,
   LENGTH_LABELS,
@@ -20,7 +22,6 @@ import {
 import type { Locale } from "@/config/i18n";
 import { cn } from "@/lib/utils";
 
-import { Art, type ArtName } from "./art";
 import { useCopy, useLocale } from "./locale-context";
 import { Reveal } from "./reveal";
 
@@ -68,11 +69,14 @@ export function ServicesBlock({
       {SERVICE_CATEGORIES.map((c, i) => (
         <Reveal key={c.id} kind="spring-rise" delay={(i % 3) * 0.06}>
           <article className="t-card group h-full overflow-hidden transition-transform duration-300 hover:-translate-y-1">
-            <div className={cn("relative overflow-hidden", variant === "summary" ? "aspect-[16/7]" : "aspect-[16/6]")}>
-              <Art
-                name={`tile-${(i % 4) as 0 | 1 | 2 | 3}` as ArtName}
+            <div className="relative aspect-[16/9] overflow-hidden">
+              <Image
+                src={`/photos/treatment/${c.id}.webp`}
+                alt={c.photoAlt[locale]}
+                fill
                 sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
-                decorative
+                unoptimized
+                className="object-cover"
               />
             </div>
             <div className="grid gap-3 p-5 sm:p-6">

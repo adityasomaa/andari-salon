@@ -48,6 +48,8 @@ export type ServiceCategory = {
   id: string;
   number: string;
   name: Localized;
+  /** Alt text for the client's photo, /photos/treatment/{id}.webp. */
+  photoAlt: Localized;
   /** One line describing what the group covers. */
   summary: Localized;
   /** False for add-ons, which go on top of another treatment. */
@@ -67,6 +69,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
   {
     id: "hair-cut",
     number: "01",
+    photoAlt: { id: "Rambut hitam lurus sedang dipotong dengan gunting", en: "Long straight black hair being trimmed with scissors" },
     name: same("Hair Cut"),
     summary: {
       id: "Potong rambut, dengan atau tanpa cuci dan penataan.",
@@ -92,6 +95,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
   {
     id: "wash-styling",
     number: "02",
+    photoAlt: { id: "Rambut hitam panjang ditata dengan catok", en: "Long black hair being styled with a hair iron" },
     name: same("Hair Wash & Styling"),
     summary: {
       id: "Keramas dengan pilihan produk, catok, dan blow.",
@@ -125,6 +129,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
   {
     id: "hair-colouring",
     number: "03",
+    photoAlt: { id: "Rambut pirang sedang diwarnai oleh penata rambut", en: "Blonde hair being coloured by a stylist" },
     name: same("Hair Colouring"),
     summary: {
       id: "Harga mulai dari, menurut panjang rambut.",
@@ -141,6 +146,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
   {
     id: "hair-treatment",
     number: "04",
+    photoAlt: { id: "Krim perawatan diaplikasikan ke rambut dan kulit kepala", en: "Treatment cream being worked through the hair and scalp" },
     name: same("Hair Treatment"),
     summary: { id: "Harga menurut panjang rambut.", en: "Priced by hair length." },
     bookable: true,
@@ -153,6 +159,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
   {
     id: "hair-care",
     number: "05",
+    photoAlt: { id: "Rambut dikeramas di wastafel salon", en: "Hair being washed at a salon basin" },
     name: same("Hair Care"),
     summary: { id: "Masker, hair spa, dan creambath.", en: "Masks, hair spa and creambath." },
     bookable: true,
@@ -170,6 +177,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
   {
     id: "add-ons",
     number: "06",
+    photoAlt: { id: "Rambut hitam panjang yang lurus dan berkilau", en: "Long, straight, glossy black hair" },
     name: same("Add Ons"),
     summary: { id: "Tambahan untuk treatment lain.", en: "Extras added to another treatment." },
     bookable: false,
