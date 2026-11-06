@@ -1,49 +1,103 @@
 /**
- * SAMPLE PRODUCT GROUPS.
+ * THE PRODUCTS THE SALON USES.
  *
- * The salon has not said which products it uses or sells. These are the
- * ordinary kinds of take-home hair care a salon stocks, with no brands, no
- * prices and no claims, and the page labels them as a sample
- * (COPY.products.sampleNotice).
+ * Brands from the partnership proposal's product list, with the client's own
+ * product photos (Drive folder "produk", converted into
+ * public/photos/products/). Each line names only what the photo shows. No
+ * prices, and no claim that a product is sold: the page routes availability
+ * questions to WhatsApp.
  *
- * When the real list arrives, replace the groups and set PRODUCTS_ARE_SAMPLE
- * to false.
+ * Brands from the proposal that have no photo yet are listed in OTHER_BRANDS.
+ * When a photo arrives, move the brand into PRODUCT_GROUPS.
  */
 
 import type { Localized } from "./services";
 
-export const PRODUCTS_ARE_SAMPLE = true;
+/** True while the list is a placeholder. The sample banner follows it. */
+export const PRODUCTS_ARE_SAMPLE = false;
 
 export type ProductGroup = {
   id: string;
-  number: string;
-  name: Localized;
+  brand: string;
+  /** What the photo shows, in one line. */
   note: Localized;
+  /** public/photos/products/{photo}.webp, square. */
+  photo: string;
+  alt: Localized;
 };
 
 export const PRODUCT_GROUPS: ProductGroup[] = [
   {
-    id: "shampoo-kondisioner",
-    number: "01",
-    name: { id: "Sampo dan Kondisioner", en: "Shampoo and Conditioner" },
-    note: { id: "Untuk mencuci dan merawat rambut sehari-hari.", en: "For everyday washing and care." },
+    id: "cbd",
+    brand: "CBD Professional",
+    note: {
+      id: "Rangkaian Keratin Pro, Collagen, Bio Peptide, dan Color: sampo, masker, dan serum.",
+      en: "The Keratin Pro, Collagen, Bio Peptide and Color ranges: shampoos, masks and serums.",
+    },
+    photo: "cbd",
+    alt: { id: "Produk perawatan rambut CBD Professional", en: "CBD Professional hair care products" },
   },
   {
-    id: "masker",
-    number: "02",
-    name: { id: "Masker Rambut", en: "Hair Masks" },
-    note: { id: "Perawatan berkala di rumah, di antara kunjungan.", en: "Regular care at home, between visits." },
+    id: "loreal",
+    brand: "L'Oréal Professionnel",
+    note: {
+      id: "Serie Expert: Pro Longer, Silver, Vitamino Color, Serioxyl Advanced, dan Hair Spa.",
+      en: "Serie Expert: Pro Longer, Silver, Vitamino Color, Serioxyl Advanced and Hair Spa.",
+    },
+    photo: "loreal",
+    alt: { id: "Produk L'Oréal Professionnel Serie Expert", en: "L'Oréal Professionnel Serie Expert products" },
   },
   {
-    id: "serum-minyak",
-    number: "03",
-    name: { id: "Serum dan Minyak Rambut", en: "Serums and Hair Oils" },
-    note: { id: "Dipakai pada batang rambut setelah dicuci.", en: "Applied to the lengths after washing." },
+    id: "matrix-care",
+    brand: "Matrix",
+    note: {
+      id: "Perawatan dan pelurusan: Food For Soft, So Silver, SoColor Sync, dan Opti Straight.",
+      en: "Care and straightening: Food For Soft, So Silver, SoColor Sync and Opti Straight.",
+    },
+    photo: "matrix",
+    alt: { id: "Produk perawatan dan pelurusan rambut Matrix", en: "Matrix hair care and straightening products" },
   },
   {
-    id: "penataan",
-    number: "04",
-    name: { id: "Produk Penataan", en: "Styling Products" },
-    note: { id: "Untuk membentuk dan menahan tatanan rambut.", en: "For shaping and holding a style." },
+    id: "matrix-colour",
+    brand: "Matrix SoColor",
+    note: {
+      id: "Pewarnaan: SoColor Pre-Bonded, SoColor Beauty, dan Opti Smooth.",
+      en: "Colour: SoColor Pre-Bonded, SoColor Beauty and Opti Smooth.",
+    },
+    photo: "matrix-2",
+    alt: { id: "Produk pewarnaan rambut Matrix SoColor", en: "Matrix SoColor hair colour products" },
+  },
+  {
+    id: "makarizo",
+    brand: "Makarizo Professional",
+    note: {
+      id: "Salon Daily Professional Creambath.",
+      en: "Salon Daily Professional Creambath.",
+    },
+    photo: "makarizo",
+    alt: { id: "Creambath Makarizo Professional Salon Daily", en: "Makarizo Professional Salon Daily creambath" },
+  },
+  {
+    id: "mastaka",
+    brand: "Mastaka",
+    note: {
+      id: "Shampoo Salon Daily dalam beberapa varian aroma.",
+      en: "Salon Daily shampoo in several scents.",
+    },
+    photo: "mastaka",
+    alt: { id: "Shampoo Salon Daily Mastaka", en: "Mastaka Salon Daily shampoo" },
+  },
+  {
+    id: "pro-techs",
+    brand: "Pro-Techs",
+    note: {
+      id: "Protein Gold II untuk perawatan keratin.",
+      en: "Protein Gold II for keratin treatments.",
+    },
+    photo: "gold-keratin",
+    alt: { id: "Botol Pro-Techs Protein Gold II", en: "A bottle of Pro-Techs Protein Gold II" },
   },
 ];
+
+/** From the proposal's product list, without photos yet. */
+export const OTHER_BRANDS = ["Jihoda Gel Perm Set", "NR", "Ordeve", "Sinko", "Absolut Repair Hair Oil"];

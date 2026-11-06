@@ -199,8 +199,8 @@ export function TermsContent({ locale }: { locale: Locale }) {
 
         <h2>Site content</h2>
         <p>
-          This site shows general information about our salon. {SITE.name} has just opened, and
-          some of the content, such as the product page, is still a sample.
+          This site shows general information about our salon, including its treatment
+          menu, prices and the products it uses.
         </p>
 
         <h2>Booking</h2>
@@ -262,8 +262,8 @@ export function TermsContent({ locale }: { locale: Locale }) {
 
       <h2>Isi situs</h2>
       <p>
-        Situs ini menampilkan keterangan umum tentang salon kami. {SITE.name} baru dibuka, dan
-        sebagian isinya, misalnya halaman produk, masih berupa contoh.
+        Situs ini menampilkan keterangan umum tentang salon kami, termasuk menu treatment,
+        harga, dan produk yang kami pakai.
       </p>
 
       <h2>Booking</h2>

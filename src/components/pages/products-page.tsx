@@ -1,17 +1,18 @@
 "use client";
 
 /**
- * Produk. The salon has not said which products it carries, so this lists
- * the ordinary kinds of take-home hair care as a labelled sample, with no
- * brands and no prices, and routes every question to WhatsApp.
+ * Produk. The professional products the salon uses, one card per brand
+ * line with the client's photo, then the brands from the proposal that have
+ * no photo yet. Availability questions go to WhatsApp.
  */
 
-import { Art, type ArtName } from "@/components/shared/art";
+import Image from "next/image";
+
 import { useCopy, useLocale } from "@/components/shared/locale-context";
 import { Reveal } from "@/components/shared/reveal";
 import { SectionHeader } from "@/components/shared/section-header";
 import { SampleNotice } from "@/components/shared/services-block";
-import { PRODUCTS_ARE_SAMPLE, PRODUCT_GROUPS } from "@/config/products";
+import { OTHER_BRANDS, PRODUCTS_ARE_SAMPLE, PRODUCT_GROUPS } from "@/config/products";
 
 export function ProductsPage() {
   const copy = useCopy();
@@ -29,28 +30,42 @@ export function ProductsPage() {
       <section className="pb-[var(--t-section-y)]" style={{ background: "var(--t-bg-alt)" }}>
         <div className="t-shell grid gap-4 sm:grid-cols-2 lg:grid-cols-4" style={{ paddingTop: "clamp(2rem,5vw,4rem)" }}>
           {PRODUCT_GROUPS.map((g, i) => (
-            <Reveal key={g.id} kind="spring-rise" delay={i * 0.06}>
+            <Reveal key={g.id} kind="spring-rise" delay={(i % 4) * 0.06} className="h-full">
               <article className="t-card h-full overflow-hidden">
-                <div className="relative aspect-square overflow-hidden">
-                  <Art
-                    name={`tile-${(i % 4) as 0 | 1 | 2 | 3}` as ArtName}
+                <div className="relative aspect-square overflow-hidden" style={{ background: "#fff" }}>
+                  <Image
+                    src={`/photos/products/${g.photo}.webp`}
+                    alt={g.alt[locale]}
+                    fill
                     sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 92vw"
-                    decorative
+                    unoptimized
+                    className="object-cover"
                   />
                 </div>
                 <div className="grid gap-2 p-5">
-                  <span
-                    className="t-label inline-flex w-fit items-center rounded-full px-3 py-1 tabular-nums"
-                    style={{ background: "var(--t-accent-soft)" }}
-                  >
-                    {g.number}
-                  </span>
-                  <h2 className="text-[length:var(--t-h3)] font-medium">{g.name[locale]}</h2>
+                  <h2 className="text-[length:var(--t-h3)] font-medium">{g.brand}</h2>
                   <p className="t-body text-[length:var(--t-small)]">{g.note[locale]}</p>
                 </div>
               </article>
             </Reveal>
           ))}
+
+          <Reveal kind="spring-rise" delay={0.18} className="h-full">
+            <article className="t-card grid h-full content-center gap-4 p-6">
+              <h2 className="text-[length:var(--t-h3)] font-medium">{copy.products.otherTitle}</h2>
+              <ul className="flex flex-wrap gap-1.5">
+                {OTHER_BRANDS.map((b) => (
+                  <li
+                    key={b}
+                    className="rounded-full px-3 py-1.5 text-[0.82rem]"
+                    style={{ background: "var(--t-bg-alt)", color: "var(--t-fg-muted)" }}
+                  >
+                    {b}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </Reveal>
         </div>
       </section>
     </>

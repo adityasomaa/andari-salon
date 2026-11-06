@@ -299,6 +299,14 @@ function Icon({ kind }: { kind: HubLink["kind"] }) {
       </svg>
     );
   }
+  if (kind === "products") {
+    return (
+      <svg {...common}>
+        <path d="M10 3h4v3.5l1.5 2V20a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1V8.5l1.5-2z" />
+        <path d="M8.5 12h7" />
+      </svg>
+    );
+  }
   if (kind === "partnership") {
     return (
       <svg {...common}>

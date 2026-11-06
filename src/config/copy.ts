@@ -64,7 +64,7 @@ const COPY_ID = {
     products: {
       metaTitle: "Produk",
       metaDescription:
-        "Produk perawatan rambut di Andari Salon. Tanyakan ketersediaannya lewat WhatsApp.",
+        "Produk profesional yang dipakai di Andari Salon: CBD, L'Oréal Professionnel, Matrix, Makarizo, Mastaka, dan Pro-Techs.",
     },
     partnership: {
       metaTitle: "Kemitraan",
@@ -154,10 +154,11 @@ const COPY_ID = {
   /** Products page header. */
   products: {
     label: "Produk",
-    headline: "Produk perawatan rambut.",
+    headline: "Produk yang kami pakai.",
     description:
-      "Produk yang kami pakai dan sediakan di salon akan tampil di sini. Untuk sekarang, tanyakan ketersediaannya lewat WhatsApp.",
+      "Merek profesional yang dipakai untuk treatment di Andari Salon. Untuk ketersediaan produk, tanyakan lewat WhatsApp.",
     cta: { label: "Tanya produk lewat WhatsApp", wa: "products" } as Cta,
+    otherTitle: "Juga kami pakai",
     sampleNotice:
       "Contoh isi. Daftar produk dan mereknya belum kami rilis, jadi kelompok di bawah ini masih bisa berubah.",
   },
@@ -365,7 +366,7 @@ const COPY_EN: Copy = {
     },
     products: {
       metaTitle: "Products",
-      metaDescription: "Hair care products at Andari Salon. Ask about availability on WhatsApp.",
+      metaDescription: "The professional products used at Andari Salon: CBD, L'Oréal Professionnel, Matrix, Makarizo, Mastaka and Pro-Techs.",
     },
     partnership: {
       metaTitle: "Partnership",
@@ -444,10 +445,11 @@ const COPY_EN: Copy = {
 
   products: {
     label: "Products",
-    headline: "Hair care products.",
+    headline: "The products we use.",
     description:
-      "The products we use and stock at the salon will be listed here. For now, ask us about availability on WhatsApp.",
+      "Professional brands used in treatments at Andari Salon. To ask whether a product is available, message us on WhatsApp.",
     cta: { label: "Ask about products on WhatsApp", wa: "products" },
+    otherTitle: "We also use",
     sampleNotice:
       "Sample content. The product list and brands have not been released yet, so the groups below may still change.",
   },

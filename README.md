@@ -106,20 +106,21 @@ Medium / Long / Extra Long prices for hair treatment and hair colouring
 Keratin, "Loreal" to L'Oréal. Add-ons are listed but not bookable on their own;
 the form tells visitors to put them in the notes.
 
-**Products are sample content.** No product list was supplied, so
-`src/config/products.ts` lists ordinary kinds of take-home hair care with no
-brands or prices, and the page says it is a sample. Replace the groups and set
-`PRODUCTS_ARE_SAMPLE = false`.
+**Products are the client's.** `src/config/products.ts` lists the brands from
+the proposal with the client's product photos (`public/photos/products/`): CBD,
+L'Oréal Professionnel, two Matrix lines, Makarizo, Mastaka and Pro-Techs. Each
+line names only what its photo shows; no prices, and no claim they are sold.
+Proposal brands without a photo yet sit in `OTHER_BRANDS`.
 
 **The About text is a first draft.** "Tentang Andari Salon" on the home page is
 written only from known facts (where the salon is, what it does, how booking
 works). The client's own text replaces it when it arrives.
 
-**Photos on Beranda and Treatment are the client's.** From their Drive folder,
+**Photos on Beranda, Treatment and Produk are the client's.** From their Drive folders,
 converted to WebP in `public/photos/`: the hero, the shopfront in About, the
 booking banner, and one photo per treatment group in `photos/treatment/`, named
-after the group's id in `src/config/services.ts`. Products and Partnership
-still use generated tiles or crops from the proposal until theirs arrive.
+after the group's id in `src/config/services.ts`. Partnership
+uses crops from the proposal until its photos arrive.
 
 **Partnership comes from the client's proposal.** `src/config/partnership.ts`
 transcribes *PROPOSAL KEMITRAAN ANDARI SALON.pdf*: about, support (POS Hero,

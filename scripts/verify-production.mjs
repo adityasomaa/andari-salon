@@ -41,6 +41,7 @@ const ASSETS = [
   "/brand/monogram-olive.svg",
   ...["hero", "booking-banner", "exterior", "interior-1", "interior-2", "lounge", "reception", "styling"].map((n) => `/photos/${n}.webp`),
   ...["hair-cut", "wash-styling", "hair-colouring", "hair-treatment", "hair-care", "add-ons"].map((n) => `/photos/treatment/${n}.webp`),
+  ...["cbd", "loreal", "matrix", "matrix-2", "makarizo", "mastaka", "gold-keratin"].map((n) => `/photos/products/${n}.webp`),
   "/fonts/NeueMontreal-Light.woff2",
   "/fonts/NeueMontreal-Regular.woff2",
   "/fonts/NeueMontreal-Medium.woff2",
@@ -268,7 +269,7 @@ async function checkSeo() {
   const en = await (await fetch(`${ORIGIN}/en/products`)).text();
   if (!/<html[^>]*lang="en"/.test(en)) bad("/en pages do not declare lang=en");
   if (!en.toLowerCase().includes(`hreflang="id" href="${SITE}/produk"`)) bad("/en/products does not point at its Indonesian page");
-  if (!en.includes("Hair care products.")) bad("/en/products is not in English");
+  if (!en.includes("The products we use.")) bad("/en/products is not in English");
   ok("English pages declare lang=en and link their Indonesian counterparts");
 
   const home = await (await fetch(`${ORIGIN}/`)).text();
@@ -290,6 +291,13 @@ async function checkSeo() {
   }
   if (!menu.includes("/photos/treatment/add-ons.webp")) bad("treatment page is missing its group photos");
   ok("home and treatment pages show the client's photos");
+
+  const products = await (await fetch(`${ORIGIN}/produk`)).text();
+  for (const needle of ["/photos/products/cbd.webp", "/photos/products/gold-keratin.webp", "Matrix SoColor", "Juga kami pakai"]) {
+    if (!products.includes(needle)) bad(`/produk is missing "${needle}"`);
+  }
+  if (products.includes('data-testid="sample-notice"')) bad("/produk still says its list is a sample");
+  ok("product page shows the client's products and no sample notice");
 
   // The branch hub must route to the branch, never to the main salon.
   const glogor = await (await fetch(`${ORIGIN}/glogor`)).text();

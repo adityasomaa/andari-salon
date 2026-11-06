@@ -34,7 +34,8 @@ export type LinkKind =
   | "form"
   | "services"
   | "review"
-  | "partnership";
+  | "partnership"
+  | "products";
 
 /** One entry in a row's branch list. */
 export type HubChoice = {
@@ -124,6 +125,12 @@ export const HUB_OFFICIAL: Hub = {
       kind: "services",
       label: "Menu treatment & harga",
       href: href("treatment", "id"),
+    },
+    {
+      id: "products",
+      kind: "products",
+      label: "Produk yang kami pakai",
+      href: href("products", "id"),
     },
     {
       id: "location",
