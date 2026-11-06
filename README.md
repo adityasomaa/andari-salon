@@ -123,8 +123,8 @@ after the group's id in `src/config/services.ts`. Partnership
 uses crops from the proposal until its photos arrive.
 
 **Partnership comes from the client's proposal.** `src/config/partnership.ts`
-transcribes *PROPOSAL KEMITRAAN ANDARI SALON.pdf*: about, support (POS Hero,
-team structure, training), the Rp 250.000.000 investment estimate and Rp
+transcribes *PROPOSAL KEMITRAAN ANDARI SALON 149jt.pdf*: about, support (Andari Apps,
+marketing, permits, product supply, location, training), the Rp 149.000.000 Essential package and Rp
 5.000.000 deposit, the client's low/medium/high monthly projection (shown with
 a "not a guarantee" line; `npm run verify` fails if that line disappears), the
 eleven-step process, both branches, the 20+ planned areas and four

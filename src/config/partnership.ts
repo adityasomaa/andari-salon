@@ -1,6 +1,7 @@
 /**
  * The partnership page, from the client's own proposal
- * (PROPOSAL KEMITRAAN ANDARI SALON.pdf, 2026).
+ * (PROPOSAL KEMITRAAN ANDARI SALON 149jt.pdf, 2026: the "Essential" package,
+ * which replaced the earlier Rp 250 jt version).
  *
  * Numbers are transcribed exactly as the proposal states them, not
  * recomputed, so the page and the proposal a prospect receives can never
@@ -27,36 +28,38 @@ export type Scenario = {
 
 export const INVESTMENT = {
   items: [
-    {
-      label: { id: "Sewa ruko (per tahun)", en: "Shop-house rent (per year)" },
-      amount: 50_000_000,
-    },
+    { label: { id: "Peralatan salon", en: "Salon equipment" }, amount: 80_000_000 },
+    { label: { id: "Produk salon", en: "Salon products" }, amount: 39_000_000 },
     {
       label: {
-        id: "Renovasi, desain interior, furnitur, dan elektronik",
-        en: "Renovation, interior design, furniture and electronics",
+        id: "Perizinan, trainer, marketing, iklan, dan lain-lain",
+        en: "Permits, trainer, marketing, advertising and more",
       },
-      amount: 100_000_000,
-    },
-    {
-      label: {
-        id: "Peralatan salon, produk, marketing, iklan, dan lain-lain",
-        en: "Salon equipment, products, marketing, advertising and more",
-      },
-      amount: 100_000_000,
+      amount: 30_000_000,
     },
   ] as Array<{ label: Localized; amount: number }>,
-  total: 250_000_000,
+  total: 149_000_000,
   deposit: 5_000_000,
+  /** The proposal's "Biaya Sudah Termasuk" page. */
+  included: [
+    { id: "Pengurusan perizinan Andari Salon", en: "Andari Salon permits" },
+    { id: "Budget marketing (KOL/Mediagram)", en: "Marketing budget (KOL/Mediagram)" },
+    { id: "Iklan", en: "Advertising" },
+    { id: "Laptop", en: "Laptop" },
+    { id: "HP", en: "Mobile phone" },
+    { id: "Iklan lowongan staff", en: "Staff recruitment ads" },
+    { id: "Ongkos kirim barang", en: "Shipping of goods" },
+    { id: "Opening set up, training, dan akomodasi", en: "Opening set-up, training and accommodation" },
+  ] as Localized[],
 };
 
 export const PROJECTION = {
   chairs: 8,
   pricePerTreatment: 80_000,
   scenarios: [
-    { key: "low", guestsPerDay: 20, revenueMonth: 48_000_000, costMonth: 36_819_667, netMonth: 11_180_333, roiYearPercent: 54, paybackMonths: 22 },
-    { key: "medium", guestsPerDay: 28, revenueMonth: 67_200_000, costMonth: 46_299_667, netMonth: 20_900_333, roiYearPercent: 100, paybackMonths: 12 },
-    { key: "high", guestsPerDay: 32, revenueMonth: 76_800_000, costMonth: 50_139_667, netMonth: 26_660_333, roiYearPercent: 128, paybackMonths: 9 },
+    { key: "low", guestsPerDay: 20, revenueMonth: 48_000_000, costMonth: 32_979_667, netMonth: 15_020_333, roiYearPercent: 121, paybackMonths: 10 },
+    { key: "medium", guestsPerDay: 28, revenueMonth: 67_200_000, costMonth: 40_923_667, netMonth: 26_276_333, roiYearPercent: 212, paybackMonths: 6 },
+    { key: "high", guestsPerDay: 32, revenueMonth: 76_800_000, costMonth: 43_995_667, netMonth: 32_804_333, roiYearPercent: 264, paybackMonths: 5 },
   ] as Scenario[],
 };
 
@@ -109,6 +112,8 @@ type Text = {
     totalLabel: string;
     depositLabel: string;
     depositNote: string;
+    includedTitle: string;
+    excludedNote: string;
   };
   projection: {
     headline: string;
@@ -165,34 +170,41 @@ export const PARTNERSHIP_TEXT: Record<Locale, Text> = {
       headline: "Yang Anda dapatkan sebagai mitra.",
       items: [
         {
-          title: "Sistem kasir dan laporan",
-          body: "Cabang memakai POS Hero, sistem yang sama dengan Andari: pesanan, stok, pembelian, dan laporan dalam satu tempat.",
+          title: "Andari Apps",
+          body: "Aplikasi kasir dan laporan yang sama dengan Andari: pesanan, stok, pembelian, dan laporan dalam satu tempat.",
         },
         {
-          title: "Struktur tim yang jelas",
-          body: "Satu Admin (administrasi, kasir, laporan, data pelanggan), satu Lead Hairdresser yang menjaga kualitas layanan rambut, dan tiga Asisten Hairdresser.",
+          title: "Marketing",
+          body: "Budget marketing (KOL/Mediagram) dan iklan, termasuk iklan lowongan staff, sudah termasuk dalam paket.",
         },
         {
-          title: "Pelatihan staff",
-          body: "Tim cabang dilatih sebelum grand opening, sebagai bagian dari alur kemitraan.",
+          title: "Pengurusan izin",
+          body: "Perizinan cabang Andari Salon diurus sebagai bagian dari paket.",
         },
         {
-          title: "Menu dan produk",
-          body: "Menu treatment Andari Salon, dengan produk profesional seperti CBD, Matrix, L'Oréal, dan Makarizo.",
+          title: "Supply produk treatment",
+          body: "Produk profesional untuk treatment, seperti CBD, Matrix, L'Oréal, dan Makarizo, beserta alat dan perlengkapan salon.",
         },
         {
-          title: "Renovasi dan interior",
-          body: "Renovasi ruko dan desain interior sudah masuk dalam alur dan estimasi biaya kemitraan.",
+          title: "Penentuan lokasi",
+          body: "Pendampingan memilih lokasi, termasuk survei ruko yang sesuai.",
+        },
+        {
+          title: "Standar SDM dan training",
+          body: "Struktur tim (Admin, Lead Hairdresser, dan tiga Asisten Hairdresser) serta pelatihan staff sebelum grand opening.",
         },
       ],
     },
     investment: {
       label: "Investasi",
-      headline: "Estimasi investasi awal.",
-      description: "Gambaran biaya untuk membuka satu cabang, menurut proposal kemitraan Andari Salon.",
-      totalLabel: "Total estimasi",
+      headline: "Paket Kemitraan Essential.",
+      description: "Estimasi investasi untuk membuka satu cabang Andari Salon, menurut proposal kemitraan.",
+      totalLabel: "Total paket",
       depositLabel: "Tanda jadi",
       depositNote: "Dibayarkan setelah meeting, sebelum survei ruko.",
+      includedTitle: "Sudah termasuk",
+      excludedNote:
+        "Belum termasuk biaya lokasi usaha dan renovasi. Pendampingan renovasi tersedia secara opsional dengan biaya tambahan.",
     },
     projection: {
       headline: "Proyeksi per bulan",
@@ -209,7 +221,7 @@ export const PARTNERSHIP_TEXT: Record<Locale, Text> = {
       perDay: "per hari",
       months: "bulan",
       costNote:
-        "Pengeluaran sudah termasuk gaji dan insentif tim, listrik dan wifi, iklan dan marketing (5% omzet), management fee (15% omzet), sewa ruko yang dicicil per bulan, produk, pengiriman, dan perawatan.",
+        "Pengeluaran sudah termasuk gaji dan insentif tim, listrik dan wifi, iklan dan marketing (5% omzet), brand fee (7% omzet), sewa ruko per bulan, produk, pengiriman, dan perawatan.",
       disclaimer:
         "Angka di atas adalah proyeksi Andari Salon berdasarkan asumsi tersebut, bukan jaminan hasil. Hasil sebenarnya bergantung pada lokasi, pasar, dan operasional cabang. Rincian lengkapnya ada di proposal.",
     },
@@ -266,34 +278,41 @@ export const PARTNERSHIP_TEXT: Record<Locale, Text> = {
       headline: "What you get as a partner.",
       items: [
         {
-          title: "Point-of-sale and reporting",
-          body: "Each branch runs POS Hero, the same system Andari uses: orders, stock, purchasing and reporting in one place.",
+          title: "Andari Apps",
+          body: "The same point-of-sale and reporting app Andari uses: orders, stock, purchasing and reporting in one place.",
         },
         {
-          title: "A clear team structure",
-          body: "One Admin (administration, cashier, reporting, customer data), one Lead Hairdresser responsible for service quality, and three Assistant Hairdressers.",
+          title: "Marketing",
+          body: "A marketing budget (KOL/Mediagram) and advertising, including staff recruitment ads, are part of the package.",
         },
         {
-          title: "Staff training",
-          body: "The branch team is trained before the grand opening, as part of the partnership process.",
+          title: "Permits",
+          body: "Permits for the Andari Salon branch are handled as part of the package.",
         },
         {
-          title: "Menu and products",
-          body: "The Andari Salon treatment menu, with professional products such as CBD, Matrix, L'Oréal and Makarizo.",
+          title: "Treatment product supply",
+          body: "Professional treatment products such as CBD, Matrix, L'Oréal and Makarizo, along with salon tools and equipment.",
         },
         {
-          title: "Renovation and interior",
-          body: "Shop-house renovation and interior design are part of the partnership process and its cost estimate.",
+          title: "Choosing a location",
+          body: "Help choosing the location, including a survey of suitable shop-houses.",
+        },
+        {
+          title: "Staff standards and training",
+          body: "A team structure (Admin, Lead Hairdresser and three Assistant Hairdressers) and staff training before the grand opening.",
         },
       ],
     },
     investment: {
       label: "Investment",
-      headline: "Estimated initial investment.",
-      description: "What it costs to open one branch, according to the Andari Salon partnership proposal.",
-      totalLabel: "Estimated total",
+      headline: "The Essential Partnership Package.",
+      description: "The estimated investment to open one Andari Salon branch, according to the partnership proposal.",
+      totalLabel: "Package total",
       depositLabel: "Deposit",
       depositNote: "Paid after the meeting, before the shop-house survey.",
+      includedTitle: "Already included",
+      excludedNote:
+        "Not included: the cost of the business premises and renovation. Renovation support is available as an option at extra cost.",
     },
     projection: {
       headline: "Monthly projection",
@@ -310,7 +329,7 @@ export const PARTNERSHIP_TEXT: Record<Locale, Text> = {
       perDay: "per day",
       months: "months",
       costNote:
-        "Expenses include team salaries and incentives, electricity and wifi, advertising and marketing (5% of revenue), a management fee (15% of revenue), shop-house rent spread monthly, products, delivery and maintenance.",
+        "Expenses include team salaries and incentives, electricity and wifi, advertising and marketing (5% of revenue), a brand fee (7% of revenue), monthly shop-house rent, products, delivery and maintenance.",
       disclaimer:
         "These figures are Andari Salon's projection under the assumptions above, not a guarantee. Actual results depend on location, market and how the branch is run. The full breakdown is in the proposal.",
     },

@@ -341,8 +341,8 @@ async function checkSeo() {
   // Partnership enquiries go to the partnership team, and the projection is
   // never shown without the line saying it is not a guarantee.
   for (const [path, needles] of [
-    ["/kemitraan", ["wa.me/6282266307929?text=", "mailto:andarisalon13@gmail.com", "Rp 250.000.000", "Rp 5.000.000", "bukan jaminan hasil", "Grand opening", "Jl. Taman Pancing Timur"]],
-    ["/en/partnership", ["wa.me/6282266307929?text=", "Rp 250.000.000", "not a guarantee", "Grand opening"]],
+    ["/kemitraan", ["wa.me/6282266307929?text=", "mailto:andarisalon13@gmail.com", "Rp 149.000.000", "Rp 5.000.000", "bukan jaminan hasil", "Belum termasuk biaya lokasi usaha dan renovasi", "brand fee (7% omzet)", "Grand opening", "Jl. Taman Pancing Timur"]],
+    ["/en/partnership", ["wa.me/6282266307929?text=", "Rp 149.000.000", "not a guarantee", "Grand opening"]],
   ]) {
     const html = await (await fetch(`${ORIGIN}${path}`)).text();
     for (const needle of needles) if (!html.includes(needle)) bad(`${path} is missing "${needle}"`);

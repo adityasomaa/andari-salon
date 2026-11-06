@@ -83,13 +83,15 @@ export function PartnershipPage() {
         <Title label={T.support.label} headline={T.support.headline} />
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {T.support.items.map((item, i) => (
-            <Reveal key={item.title} kind="spring-rise" delay={(i % 3) * 0.06}>
-              <li className="t-card grid h-full content-start gap-3 p-6">
-                <Num>{i + 1}</Num>
-                <h3 className="text-[length:var(--t-h3)] font-medium">{item.title}</h3>
-                <p className="t-body text-[length:var(--t-small)]">{item.body}</p>
-              </li>
-            </Reveal>
+            <li key={item.title}>
+              <Reveal kind="spring-rise" delay={(i % 3) * 0.06} className="h-full">
+                <div className="t-card grid h-full content-start gap-3 p-6">
+                  <Num>{i + 1}</Num>
+                  <h3 className="text-[length:var(--t-h3)] font-medium">{item.title}</h3>
+                  <p className="t-body text-[length:var(--t-small)]">{item.body}</p>
+                </div>
+              </Reveal>
+            </li>
           ))}
         </ul>
       </Band>
@@ -118,6 +120,26 @@ export function PartnershipPage() {
                   {T.investment.depositNote}
                 </p>
               </div>
+              <div className="mt-5 grid gap-3">
+                <p className="t-label">{T.investment.includedTitle}</p>
+                <ul className="grid gap-2 text-[length:var(--t-small)] sm:grid-cols-2">
+                  {INVESTMENT.included.map((item) => (
+                    <li key={item.id} className="flex items-baseline gap-2">
+                      <span aria-hidden style={{ color: "var(--t-accent)" }}>
+                        ✓
+                      </span>
+                      <span>{item[locale]}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <p
+                className="mt-5 p-3 text-[0.8rem] leading-relaxed"
+                style={{ border: "1px dashed var(--t-line-strong)", borderRadius: "var(--t-radius-sm)", color: "var(--t-fg-muted)" }}
+                data-testid="investment-excluded"
+              >
+                {T.investment.excludedNote}
+              </p>
             </div>
           </Reveal>
 
@@ -168,12 +190,14 @@ export function PartnershipPage() {
         <Title label={T.steps.label} headline={T.steps.headline} />
         <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {T.steps.items.map((step, i) => (
-            <Reveal key={step} kind="spring-rise" delay={(i % 3) * 0.05}>
-              <li className="t-card flex h-full items-center gap-4 p-4 sm:p-5">
-                <Num>{i + 1}</Num>
-                <span className="font-medium">{step}</span>
-              </li>
-            </Reveal>
+            <li key={step}>
+              <Reveal kind="spring-rise" delay={(i % 3) * 0.05} className="h-full">
+                <div className="t-card flex h-full items-center gap-4 p-4 sm:p-5">
+                  <Num>{i + 1}</Num>
+                  <span className="font-medium">{step}</span>
+                </div>
+              </Reveal>
+            </li>
           ))}
         </ol>
       </Band>
@@ -249,17 +273,19 @@ export function PartnershipPage() {
         <Title label={T.testimonials.label} headline={T.testimonials.headline} description={T.testimonials.note} />
         <ul className="grid gap-4 sm:grid-cols-2">
           {TESTIMONIALS.map((t, i) => (
-            <Reveal key={t.name} kind="spring-rise" delay={(i % 2) * 0.06}>
-              <li className="t-card grid h-full content-start gap-3 p-6">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="font-medium">{t.name}</p>
-                  <Stars label={locale === "en" ? "5 out of 5 stars" : "5 dari 5 bintang"} />
+            <li key={t.name}>
+              <Reveal kind="spring-rise" delay={(i % 2) * 0.06} className="h-full">
+                <div className="t-card grid h-full content-start gap-3 p-6">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-medium">{t.name}</p>
+                    <Stars label={locale === "en" ? "5 out of 5 stars" : "5 dari 5 bintang"} />
+                  </div>
+                  <blockquote lang="id" className="t-body text-[length:var(--t-small)]">
+                    {t.text}
+                  </blockquote>
                 </div>
-                <blockquote lang="id" className="t-body text-[length:var(--t-small)]">
-                  {t.text}
-                </blockquote>
-              </li>
-            </Reveal>
+              </Reveal>
+            </li>
           ))}
         </ul>
       </Band>
