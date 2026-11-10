@@ -17,6 +17,7 @@ import { useCopy, useLocale } from "@/components/shared/locale-context";
 import { Reveal } from "@/components/shared/reveal";
 import { SectionHeader } from "@/components/shared/section-header";
 import { WhatsAppLink } from "@/components/shared/whatsapp-link";
+import { BRANCHES } from "@/config/links";
 import {
   INVESTMENT,
   PARTNERSHIP_TEXT,
@@ -26,13 +27,7 @@ import {
   TESTIMONIALS,
 } from "@/config/partnership";
 import { formatRupiah } from "@/config/services";
-import {
-  ADDRESS,
-  BRANCH_GLOGOR,
-  CONTACT,
-  MAIN_BRANCH_AREA,
-  PARTNERSHIP_CONTACT,
-} from "@/config/site";
+import { CONTACT, PARTNERSHIP_CONTACT } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 export function PartnershipPage() {
@@ -205,19 +200,18 @@ export function PartnershipPage() {
       {/* Branches */}
       <Band alt>
         <Title label={T.branches.label} headline={T.branches.headline} />
-        <div className="grid gap-4 md:grid-cols-2">
-          {[
-            { area: MAIN_BRANCH_AREA, address: ADDRESS.full, maps: ADDRESS.mapsUrl },
-            { area: BRANCH_GLOGOR.area, address: BRANCH_GLOGOR.address, maps: BRANCH_GLOGOR.mapsUrl },
-          ].map((b, i) => (
-            <Reveal key={b.area} kind="spring-rise" delay={i * 0.06}>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {BRANCHES.map((b, i) => (
+            <Reveal key={b.area} kind="spring-rise" delay={i * 0.06} className="h-full">
               <div className="t-card grid h-full content-start gap-2 p-6">
                 <h3 className="text-[length:var(--t-h3)] font-medium">
                   {T.branches.branchPrefix} {b.area}
                 </h3>
-                <address className="t-body text-[length:var(--t-small)] not-italic">{b.address}</address>
+                {b.address ? (
+                  <address className="t-body text-[length:var(--t-small)] not-italic">{b.address}</address>
+                ) : null}
                 <a
-                  href={b.maps}
+                  href={b.mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-1 w-fit text-[length:var(--t-small)] underline underline-offset-4"

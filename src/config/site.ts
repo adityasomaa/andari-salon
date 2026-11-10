@@ -109,6 +109,22 @@ export const BRANCH_GLOGOR = {
 } as const;
 
 /**
+ * The Tohpati branch, as the client sent it. No street address was supplied
+ * (the Maps link resolves to the place "Andari Salon Tohpati" with
+ * coordinates only), so none is written out anywhere.
+ */
+export const BRANCH_TOHPATI = {
+  name: "Andari Salon Tohpati",
+  area: "Tohpati",
+  whatsappDisplay: "082359658956",
+  whatsappE164: "6282359658956",
+  instagramHandle: "@andarisalon.tohpati",
+  instagramUrl: "https://www.instagram.com/andarisalon.tohpati/",
+  mapsUrl: "https://maps.app.goo.gl/LpKfwrSuQPju31oU6",
+  reviewUrl: "https://g.page/r/CUiwTXIMzJ_UECE/review",
+} as const;
+
+/**
  * The partnership team's own contact, from the proposal's last page. A
  * different WhatsApp from the salon's: bookings go to CONTACT, partnership
  * enquiries come here. The proposal also names a Facebook page and a TikTok

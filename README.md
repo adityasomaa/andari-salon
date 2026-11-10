@@ -29,7 +29,7 @@ the matching new page.
 | Booking form | `/reservasi` | `/en/book` |
 | Privacy, terms | `/privacy`, `/terms` | `/en/privacy`, `/en/terms` |
 | Official link hub, all branches | `/booking` | (Indonesian only) |
-| Branch link hubs | `/monang-maning`, `/glogor` | (Indonesian only) |
+| Branch link hubs | `/monang-maning`, `/glogor`, `/tohpati` | (Indonesian only) |
 
 Header: Beranda, Treatment, Produk, Kemitraan, Kontak, the ID/EN switch, and a
 filled **Booking** button that opens WhatsApp with the booking greeting. The
@@ -70,7 +70,7 @@ One-screen pages for Instagram bios, all in `src/config/links.ts`:
   `<dialog>`), each with its own WhatsApp number or map, so a booking never
   lands at the wrong branch. Then the treatment menu, partnership, Instagram
   and the website. Add a branch to `BRANCHES` and both lists follow.
-- `/monang-maning` and `/glogor` are the branches' own hubs. Only Monang
+- `/monang-maning`, `/glogor` and `/tohpati` are the branches' own hubs. Only Monang
   Maning has a booking-form row, because the site's form sends to its number.
 
 Each fits one screen and does not scroll: height is `100svh` (not `100vh`,

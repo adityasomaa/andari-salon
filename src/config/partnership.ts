@@ -66,7 +66,7 @@ export const PROJECTION = {
 /** Areas named on the proposal's "Coming Soon 20+ Cabang" map. */
 export const PLANNED_AREAS = [
   "Dalung", "Ayani", "Panjer", "Pedungan", "Sesetan",
-  "Tohpati", "Sanur", "Hayam Wuruk", "Kerobokan",
+  "Sanur", "Hayam Wuruk", "Kerobokan",
   "Nusa Dua", "Nangka Utara", "Abiansemal", "Gianyar",
   "Jimbaran", "Bangli", "Karangasem", "Klungkung",
   "Singaraja", "Seririt", "Negara", "Tabanan",

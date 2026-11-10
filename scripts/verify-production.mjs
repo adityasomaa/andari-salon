@@ -18,7 +18,7 @@ const ORIGIN = process.argv[2] ?? "https://andarisalon.id";
 const PAGES_ID = ["/", "/treatment", "/produk", "/kemitraan", "/kontak", "/reservasi", "/privacy", "/terms"];
 const PAGES_EN = ["/en", "/en/treatments", "/en/products", "/en/partnership", "/en/contact", "/en/book", "/en/privacy", "/en/terms"];
 
-const ROUTES = [...PAGES_ID, ...PAGES_EN, "/booking", "/monang-maning", "/glogor", "/robots.txt", "/sitemap.xml"];
+const ROUTES = [...PAGES_ID, ...PAGES_EN, "/booking", "/monang-maning", "/glogor", "/tohpati", "/robots.txt", "/sitemap.xml"];
 
 /** Old preview and slug URLs, and where they must land. */
 const REDIRECTS = [
@@ -259,7 +259,7 @@ async function checkSeo() {
   if (!robots.includes(`${SITE}/sitemap.xml`)) bad("robots.txt does not point at the sitemap");
 
   const sitemap = await (await fetch(`${ORIGIN}/sitemap.xml`)).text();
-  for (const path of [...PAGES_ID, ...PAGES_EN, "/booking", "/monang-maning", "/glogor"]) {
+  for (const path of [...PAGES_ID, ...PAGES_EN, "/booking", "/monang-maning", "/glogor", "/tohpati"]) {
     const url = path === "/" ? SITE : `${SITE}${path}`;
     if (!sitemap.includes(`<loc>${url}</loc>`)) bad(`sitemap is missing ${url}`);
   }
@@ -319,6 +319,8 @@ async function checkSeo() {
   for (const needle of [
     "wa.me/6285218958623?text=Halo%20Andari%20Salon%20Monang%20Maning",
     "wa.me/6282345649490?text=Halo%20Andari%20Salon%20Glogor",
+    "wa.me/6282359658956?text=Halo%20Andari%20Salon%20Tohpati",
+    "maps.app.goo.gl/LpKfwrSuQPju31oU6",
     "maps.app.goo.gl/57mdKgfP8k957zQs5",
     "/kemitraan",
     "/treatment",
@@ -336,7 +338,21 @@ async function checkSeo() {
   ]) {
     if (!mm.includes(needle)) bad(`/monang-maning is missing "${needle}"`);
   }
-  ok("/booking offers both branches; /monang-maning links only its own");
+  ok("/booking offers every branch; /monang-maning links only its own");
+
+  const tohpati = await (await fetch(`${ORIGIN}/tohpati`)).text();
+  for (const needle of [
+    "wa.me/6282359658956?text=",
+    "instagram.com/andarisalon.tohpati",
+    "maps.app.goo.gl/LpKfwrSuQPju31oU6",
+    "g.page/r/CUiwTXIMzJ_UECE/review",
+    "Cabang Tohpati",
+  ]) {
+    if (!tohpati.includes(needle)) bad(`/tohpati is missing "${needle}"`);
+  }
+  if (tohpati.includes("wa.me/6285218958623")) bad("/tohpati links the Monang Maning WhatsApp");
+  if (tohpati.includes("/reservasi")) bad("/tohpati links the booking form, which goes to Monang Maning");
+  ok("/tohpati routes WhatsApp, Instagram, Maps and reviews to the branch");
 
   // Partnership enquiries go to the partnership team, and the projection is
   // never shown without the line saying it is not a guarantee.

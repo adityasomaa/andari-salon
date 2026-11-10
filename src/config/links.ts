@@ -4,6 +4,7 @@
  *   /booking        the official hub, covering every branch
  *   /monang-maning  the Monang Maning branch
  *   /glogor         the Glogor Carik branch
+ *   /tohpati        the Tohpati branch
  *
  * The official hub follows the shape the client pointed to (TM Facial Glow's
  * /booking): "Booking" and "Lokasi" open a short list of branches, each with
@@ -24,7 +25,7 @@
 
 import { getCopy } from "./copy";
 import { href } from "./i18n";
-import { ADDRESS, BRANCH_GLOGOR, BRANCH_MONANG_MANING, CONTACT, MAIN_BRANCH_AREA, SITE } from "./site";
+import { ADDRESS, BRANCH_GLOGOR, BRANCH_MONANG_MANING, BRANCH_TOHPATI, CONTACT, MAIN_BRANCH_AREA, SITE } from "./site";
 
 export type LinkKind =
   | "whatsapp"
@@ -79,8 +80,20 @@ export type Hub = {
   meta: { title: string; description: string };
 };
 
-/** Every branch, in one place, for the official hub's branch lists. */
-export const BRANCHES = [
+export type Branch = {
+  area: string;
+  name: string;
+  /** Only where the client has given one. */
+  address?: string;
+  whatsappE164: string;
+  mapsUrl: string;
+};
+
+/**
+ * Every branch, in one place: the official hub's branch lists and the
+ * partnership page's "branches already open" both read from here.
+ */
+export const BRANCHES: Branch[] = [
   {
     area: MAIN_BRANCH_AREA,
     name: `${SITE.name} ${MAIN_BRANCH_AREA}`,
@@ -95,7 +108,18 @@ export const BRANCHES = [
     whatsappE164: BRANCH_GLOGOR.whatsappE164,
     mapsUrl: BRANCH_GLOGOR.mapsUrl,
   },
+  {
+    area: BRANCH_TOHPATI.area,
+    name: BRANCH_TOHPATI.name,
+    whatsappE164: BRANCH_TOHPATI.whatsappE164,
+    mapsUrl: BRANCH_TOHPATI.mapsUrl,
+  },
 ];
+
+/** "a, b, dan c" */
+function listID(items: string[]): string {
+  return items.length < 2 ? items.join("") : `${items.slice(0, -1).join(", ")}, dan ${items[items.length - 1]}`;
+}
 
 const bookingGreeting = (name: string) => `Halo ${name}, saya ingin booking.`;
 
@@ -163,7 +187,7 @@ export const HUB_OFFICIAL: Hub = {
 
   meta: {
     title: "Tautan resmi Andari Salon",
-    description: `Booking, menu treatment, lokasi cabang ${BRANCHES.map((b) => b.area).join(" dan ")}, dan kemitraan Andari Salon.`,
+    description: `Booking, menu treatment, lokasi cabang ${listID(BRANCHES.map((b) => b.area))}, serta kemitraan Andari Salon.`,
   },
 };
 
@@ -278,7 +302,58 @@ export const HUB_GLOGOR: Hub = {
   },
 };
 
-export const HUBS = [HUB_OFFICIAL, HUB_MONANG_MANING, HUB_GLOGOR];
+/**
+ * The Tohpati branch. Same shape as Glogor, for the same reasons: its own
+ * WhatsApp, Instagram, map and review link, and no booking-form or
+ * treatment row.
+ */
+export const HUB_TOHPATI: Hub = {
+  path: "/tohpati",
+  tagline: `Cabang ${BRANCH_TOHPATI.area}`,
+  label: `Tautan ${BRANCH_TOHPATI.name}`,
+
+  links: [
+    {
+      id: "wa-booking",
+      kind: "whatsapp",
+      label: "Booking lewat WhatsApp",
+      message: bookingGreeting(BRANCH_TOHPATI.name),
+      number: BRANCH_TOHPATI.whatsappE164,
+      primary: true,
+    },
+    {
+      id: "instagram",
+      kind: "instagram",
+      label: BRANCH_TOHPATI.instagramHandle,
+      href: BRANCH_TOHPATI.instagramUrl,
+    },
+    {
+      id: "maps",
+      kind: "maps",
+      label: "Lokasi di Google Maps",
+      href: BRANCH_TOHPATI.mapsUrl,
+    },
+    {
+      id: "review",
+      kind: "review",
+      label: "Tulis ulasan di Google",
+      href: BRANCH_TOHPATI.reviewUrl,
+    },
+    {
+      id: "website",
+      kind: "site",
+      label: "Website Andari Salon",
+      href: href("home", "id"),
+    },
+  ],
+
+  meta: {
+    title: `Tautan ${BRANCH_TOHPATI.name}`,
+    description: `Booking, Instagram, lokasi, dan ulasan ${BRANCH_TOHPATI.name}, cabang ${BRANCH_TOHPATI.area}.`,
+  },
+};
+
+export const HUBS = [HUB_OFFICIAL, HUB_MONANG_MANING, HUB_GLOGOR, HUB_TOHPATI];
 
 export function hubUrl(hub: Hub): string {
   return `${SITE.url}${hub.path}`;
