@@ -321,6 +321,7 @@ async function checkSeo() {
     "wa.me/6282345649490?text=Halo%20Andari%20Salon%20Glogor",
     "wa.me/6282359658956?text=Halo%20Andari%20Salon%20Tohpati",
     "maps.app.goo.gl/LpKfwrSuQPju31oU6",
+    "Jl. WR Supratman No.320",
     "maps.app.goo.gl/57mdKgfP8k957zQs5",
     "/kemitraan",
     "/treatment",

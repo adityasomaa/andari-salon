@@ -111,6 +111,7 @@ export const BRANCHES: Branch[] = [
   {
     area: BRANCH_TOHPATI.area,
     name: BRANCH_TOHPATI.name,
+    address: BRANCH_TOHPATI.address,
     whatsappE164: BRANCH_TOHPATI.whatsappE164,
     mapsUrl: BRANCH_TOHPATI.mapsUrl,
   },

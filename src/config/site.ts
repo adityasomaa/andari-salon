@@ -109,13 +109,13 @@ export const BRANCH_GLOGOR = {
 } as const;
 
 /**
- * The Tohpati branch, as the client sent it. No street address was supplied
- * (the Maps link resolves to the place "Andari Salon Tohpati" with
- * coordinates only), so none is written out anywhere.
+ * The Tohpati branch, as the client sent it. The address came separately
+ * over WhatsApp; "Denpasar Tim." is written out in full like the others.
  */
 export const BRANCH_TOHPATI = {
   name: "Andari Salon Tohpati",
   area: "Tohpati",
+  address: "Jl. WR Supratman No.320, Kesiman Kertalangu, Kec. Denpasar Timur, Kota Denpasar, Bali 80237",
   whatsappDisplay: "082359658956",
   whatsappE164: "6282359658956",
   instagramHandle: "@andarisalon.tohpati",

@@ -180,7 +180,7 @@ function ChoiceRow({
         ref={ref}
         aria-labelledby={titleId}
         data-template="t2"
-        className="hub-sheet m-auto w-[min(26rem,calc(100vw-2.5rem))] p-0"
+        className="hub-sheet m-auto max-h-[calc(100svh-1.5rem)] w-[min(26rem,calc(100vw-2.5rem))] overflow-y-auto overscroll-contain p-0"
         // A click on the backdrop lands on the dialog element itself.
         onClick={(e) => {
           if (e.target === e.currentTarget) close();
